@@ -8,7 +8,7 @@ export default class TradeSimulatorContainer extends Component {
     this.state = {
       user: {
         name: 'Anna',
-        wallet: 100
+        wallet: 1000
       },
       values: []
     }
@@ -33,8 +33,8 @@ export default class TradeSimulatorContainer extends Component {
 
   random(array){
     let lastValue = array[array.length-1] //defines last value of an array
-    let max = lastValue + 23
-    let min = lastValue - 23
+    let max = lastValue + 10
+    let min = lastValue - 10
     array.push(Math.floor(Math.random() * (max - min) + min)); //pushes random number within a range depending on previous value
     //return array[array.length-1]
     this.addNewValue(array)
@@ -46,12 +46,33 @@ export default class TradeSimulatorContainer extends Component {
     })
   }
 
+  handleBuy(){
+    let lastValue = this.state.values[this.state.values.length-1]
+    this.setState({
+      user: {
+        name: "Anna",
+        wallet: this.state.user.wallet - lastValue
+      }
+    })
+  }
+
+  handleSell(){
+    let lastIndexNumber = this.state.values.length-1
+    let lastValue = this.state.values[lastIndexNumber]
+    this.setState({
+      user: {
+        name: "Anna",
+        wallet: this.state.user.wallet + lastValue
+      }
+    })
+  }
+
   render(){
     return(
       <div>
         <h1>Welcome to Trade Simulator</h1>
         <User user={this.state.user}/>
-        <TradeGame generator={this.generator.bind(this)} values={this.state.values}/>
+        <TradeGame generator={this.generator.bind(this)} values={this.state.values} buy={this.handleBuy.bind(this)} sell={this.handleSell.bind(this)}/>
       </div>
     )
   }
