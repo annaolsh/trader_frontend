@@ -6,7 +6,7 @@ export default class Chart extends Component {
   render() {
     return (
       <div>
-        <Line data={this.props.data}/>
+        <Line data={this.props.data} width={100} height={350} options={{maintainAspectRatio: false}}/>
       </div>
     )
   }

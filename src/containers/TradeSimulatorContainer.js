@@ -13,7 +13,7 @@ export default class TradeSimulatorContainer extends Component {
       },
       values: [],
       data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: [],
         datasets: [
           {
             label: 'My First dataset',
@@ -34,7 +34,7 @@ export default class TradeSimulatorContainer extends Component {
             pointHoverBorderWidth: 2,
             pointRadius: 4,
             pointHitRadius: 10,
-            data: [65, 59, 80, 81, 56, 55, 40]
+            data: []
           }
         ]
       }
@@ -87,8 +87,39 @@ export default class TradeSimulatorContainer extends Component {
   }
 
   addNewValue(array){
+    var chartData = this.state.data.datasets[0].data
+    var labels = this.state.data.labels
+  //  debugger
     this.setState({
-      values: this.state.values.concat([array[array.length-1]])
+      values: this.state.values.concat([array[array.length-1]]),
+      data: {
+        //labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: labels.concat([array.length]),
+        datasets: [
+          {
+            label: 'My First dataset',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: 'rgba(75,192,192,0.4)',
+            borderColor: 'rgba(75,192,192,1)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: 'rgba(75,192,192,1)',
+            pointBackgroundColor: '#fff',
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+            pointHoverBorderColor: 'rgba(220,220,220,1)',
+            pointHoverBorderWidth: 2,
+            pointRadius: 4,
+            pointHitRadius: 10,
+            width: 400,
+            data: chartData.concat([array[array.length-1]])
+          }
+        ]
+      }
     })
   }
 
