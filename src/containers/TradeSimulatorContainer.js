@@ -18,9 +18,8 @@ export default class TradeSimulatorContainer extends Component {
   generator(){
     var array = [Math.floor(Math.random() * 100 + 24)]  //generates first random value of the array
     var timer
-    var timeNowInMs = new Date().getTime()
     var timeEnd = 0
-    var interval = 3000
+    var interval = 3000 //3 seconds
     timer = setInterval(() => {
       timeEnd += 3
       if(timeEnd < 60){
@@ -33,9 +32,13 @@ export default class TradeSimulatorContainer extends Component {
 
   random(array){
     let lastValue = array[array.length-1] //defines last value of an array
-    let max = lastValue + 10
-    let min = lastValue - 10
-    array.push(Math.floor(Math.random() * (max - min) + min)); //pushes random number within a range depending on previous value
+    let maxV = lastValue + 10
+    let minV = lastValue - 10
+    //let randomValue = Math.floor(Math.random() * (maxV - minV) + minV)
+    //if randomValue - 5 <= 0
+    let randomValue = () => {return (Math.floor(Math.random() * (maxV - minV) + minV))}
+
+    array.push(randomValue()); //pushes random number within a range depending on previous value
     //return array[array.length-1]
     this.addNewValue(array)
   }
