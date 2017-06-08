@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import User from '../components/User.js';
 import TradeGame from '../components/TradeGame.js';
 
+
 export default class TradeSimulatorContainer extends Component {
   constructor(){
     super()
@@ -10,18 +11,60 @@ export default class TradeSimulatorContainer extends Component {
         name: 'Anna',
         wallet: 1000
       },
-      values: []
+      values: [],
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            label: 'My First dataset',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: 'rgba(75,192,192,0.4)',
+            borderColor: 'rgba(75,192,192,1)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: 'rgba(75,192,192,1)',
+            pointBackgroundColor: '#fff',
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+            pointHoverBorderColor: 'rgba(220,220,220,1)',
+            pointHoverBorderWidth: 2,
+            pointRadius: 4,
+            pointHitRadius: 10,
+            data: [65, 59, 80, 81, 56, 55, 40]
+          }
+        ]
+      }
     }
   }
+
+  // function dataGenerator(data,color) {
+  //   const dataset = {
+  //     labels: color.split(','),
+  //     datasets: [
+  //       {
+  //         backgroundColor: color.split(','),
+  //         data: data.split(',').map(i => parseFloat(i))
+  //       }
+  //     ]
+  //   }
+  //   console.log(dataset);
+  //   return dataset
+  // }
+
+
 
   //generates random values (currency trader Simulator)
   generator(){
     var array = [Math.floor(Math.random() * 100 + 24)]  //generates first random value of the array
     var timer
     var timeEnd = 0
-    var interval = 3000 //3 seconds
+    var interval = 2000 //3 seconds
     timer = setInterval(() => {
-      timeEnd += 3
+      timeEnd += 2
       if(timeEnd < 60){
         this.random(array)
       } else {
@@ -75,7 +118,8 @@ export default class TradeSimulatorContainer extends Component {
       <div>
         <h1>Welcome to Trade Simulator</h1>
         <User user={this.state.user}/>
-        <TradeGame generator={this.generator.bind(this)} values={this.state.values} buy={this.handleBuy.bind(this)} sell={this.handleSell.bind(this)}/>
+
+        <TradeGame generator={this.generator.bind(this)} values={this.state.values} buy={this.handleBuy.bind(this)} sell={this.handleSell.bind(this)} data={this.state.data}/>
       </div>
     )
   }
