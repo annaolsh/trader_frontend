@@ -45,7 +45,7 @@ export default class TradeSimulatorContainer extends Component {
   generator(){
     var entry = this
     var counter = 0
-    var array = [Math.floor(Math.random() * 80 + 40)]  //generates a start point
+    var array = [Math.floor(Math.random() * 80 + 10)]  //generates a start point
     console.log("Array startpoint is: ", array[0])
     var interval = 2000 //2 seconds
     function repeat(){
@@ -66,7 +66,11 @@ export default class TradeSimulatorContainer extends Component {
     let maxV = lastValue + 10
     let minV = lastValue - 10
     let randomValue = () => {
-      return (Math.floor(Math.random() * (maxV - minV) + minV))
+      var value = Math.floor(Math.random() * (maxV - minV) + minV)
+      if (value <= 0){
+        return (Math.floor(Math.random() * (60 - 20) + 20))
+      } else {return (value)}
+
     } //defins a random value within a range (depends on last value in an array)
     array.push(randomValue()); //pushes random number within a range depending on previous value
     //return array[array.length-1]
