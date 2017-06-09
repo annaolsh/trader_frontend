@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import User from '../components/User.js';
 import TradeGame from '../components/TradeGame.js';
 
-
 export default class TradeSimulatorContainer extends Component {
   constructor(){
     super()
@@ -12,6 +11,7 @@ export default class TradeSimulatorContainer extends Component {
         wallet: 1000,
         shares: 0
       },
+      actions: [],
       data: { //object for chart.js
         labels: [],
         datasets: [
@@ -42,48 +42,36 @@ export default class TradeSimulatorContainer extends Component {
     }
   }
 
-
-  // function nextSlide() {
-  //   // show next slide now
-  //   // set timer for the slide after this one
-  //   setTimeout(function() {
-  //       nextSlide();       // repeat
-  //   }, xxx)
-  // }
-
   generator(){
     var entry = this
     var counter = 0
     var array = [Math.floor(Math.random() * 80 + 40)]  //generates a start point
-    console.log("Generator works. Array startpoint is: ", array[0])
+    console.log("Array startpoint is: ", array[0])
     var interval = 2000 //2 seconds
     function repeat(){
       setTimeout(()=>{
         entry.random(array)
         counter +=1
         console.log(counter)
-        if (counter < 10){
+        if (counter < 60){
           repeat()
         }
       }, interval)
-
     }
-
     repeat()
   }
 
   random(array){
-    console.log("Random is called!")
     let lastValue = array[array.length-1]
     let maxV = lastValue + 10
     let minV = lastValue - 10
     let randomValue = () => {
-      console.log("RandomValue is called")
       return (Math.floor(Math.random() * (maxV - minV) + minV))
     } //defins a random value within a range (depends on last value in an array)
     array.push(randomValue()); //pushes random number within a range depending on previous value
     //return array[array.length-1]
     this.addNewValue(array)
+    // this.chartDataLength()
   }
 
   addNewValue(array){
@@ -122,7 +110,6 @@ export default class TradeSimulatorContainer extends Component {
 
   handleBuy(){
     let lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
-
     this.setState({
       user: {
         name: "Anna",
@@ -130,52 +117,8 @@ export default class TradeSimulatorContainer extends Component {
         shares: this.state.user.shares + 1
       }
     })
+    this.callApi("bought", -lastValue)
   }
-
-  callApi(action){
-    const URL = 'http://localhost:3000/actions'
-    fetch(URL, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({user_action: {
-        user_id: 1,
-        income: 100,
-        total: 1100,
-        action: `${action}`,
-        current_price: 5
-      }})
-    })
-    .then(res=> console.log(res))
-  }
-
-  // fetch('http://localhost:3000/stories', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json'
-  //     },
-  //     body: JSON.stringify({story: {
-  //       original_content: this.state.originalContent,
-  //       title: this.state.title,
-  //       translated_content: this.state.translatedContent
-  //     }})
-  //   })
-  //   .then(res => res.json())
-  //   .then(function(data){
-  //     //console.log('data: ', data);
-  //     entry.setState(prevState => {
-  //       return {
-  //         stories: [...prevState.stories, data],
-  //         originalContent: "",
-  //         translatedContent: "",
-  //         title: ""
-  //       }
-  //     })
-  //   })
-
 
   handleSell(){
     let lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
@@ -186,6 +129,33 @@ export default class TradeSimulatorContainer extends Component {
         shares: this.state.user.shares - 1
       }
     })
+    this.callApi("sold", lastValue)
+  }
+
+  callApi(action, lastValue){
+    const entry = this
+    fetch('http://localhost:3000/actions', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({user_action: {
+        user_id: 1,
+        income: lastValue,
+        total: this.state.user.wallet - lastValue,
+        action: `${action}`,
+        current_price: Math.abs(lastValue)
+      }})
+    })
+    .then(res=> res.json())
+    .then(function(data){
+      entry.setState(prevState => {
+        return {
+            actions: [...prevState.actions, data]
+        }
+      })
+    })
   }
 
   render(){
@@ -193,9 +163,47 @@ export default class TradeSimulatorContainer extends Component {
       <div>
         <h1>Welcome to Trade Simulator</h1>
         <User user={this.state.user}/>
-
         <TradeGame generator={this.generator.bind(this)} buy={this.handleBuy.bind(this)} sell={this.handleSell.bind(this)} state={this.state}/>
       </div>
     )
   }
 }
+
+// chartDataLength(){
+//   var chartData = this.state.data.datasets[0].data
+//   if (chartData.length >= 4){
+//     debugger
+//     var cut = chartData.length - 3
+//     var newValues = this.state.data.datasets[0].data.shift()
+//     var newLabels = this.state.data.labels.shift()
+//     this.setState({
+//       data: { //object for chart.js
+//         labels: newLabels,
+//         datasets: [
+//           {
+//             label: '$',
+//             fill: false,
+//             lineTension: 0.1,
+//             backgroundColor: null,
+//             borderColor: 'rgba(75,192,192,1)',
+//             borderCapStyle: 'butt',
+//             borderDash: [],
+//             borderWidth: 2,
+//             borderDashOffset: 0.0,
+//             borderJoinStyle: 'miter',
+//             pointBorderColor: 'rgba(75,192,192,1)',
+//             pointBackgroundColor: '#fff',
+//             pointBorderWidth: 1,
+//             pointHoverRadius: 5,
+//             pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+//             pointHoverBorderColor: 'rgba(220,220,220,1)',
+//             pointHoverBorderWidth: 2,
+//             pointRadius: 2,
+//             pointHitRadius: 10,
+//             data: newValues
+//           }
+//         ]
+//       }
+//     })
+//   }
+// }
