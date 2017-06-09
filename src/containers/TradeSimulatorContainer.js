@@ -23,6 +23,7 @@ export default class TradeSimulatorContainer extends Component {
             borderColor: 'rgba(75,192,192,1)',
             borderCapStyle: 'butt',
             borderDash: [],
+            borderWidth: 2,
             borderDashOffset: 0.0,
             borderJoinStyle: 'miter',
             pointBorderColor: 'rgba(75,192,192,1)',
@@ -32,7 +33,7 @@ export default class TradeSimulatorContainer extends Component {
             pointHoverBackgroundColor: 'rgba(75,192,192,1)',
             pointHoverBorderColor: 'rgba(220,220,220,1)',
             pointHoverBorderWidth: 2,
-            pointRadius: 4,
+            pointRadius: 2,
             pointHitRadius: 10,
             data: []
           }
@@ -41,27 +42,45 @@ export default class TradeSimulatorContainer extends Component {
     }
   }
 
-  //generates random values (currency trader Simulator)
+
+  // function nextSlide() {
+  //   // show next slide now
+  //   // set timer for the slide after this one
+  //   setTimeout(function() {
+  //       nextSlide();       // repeat
+  //   }, xxx)
+  // }
+
   generator(){
-    var array = [Math.floor(Math.random() * 100 + 24)]  //generates a start point
-    var timer
-    var timeEnd = 0
-    var interval = 2000 //3 seconds
-    timer = setInterval(() => {
-      timeEnd += 2
-      if(timeEnd < 60){
-        this.random(array)
-      } else {
-        clearInterval(timer)
-      }
-    }, interval)
+    var entry = this
+    var counter = 0
+    var array = [Math.floor(Math.random() * 80 + 40)]  //generates a start point
+    console.log("Generator works. Array startpoint is: ", array[0])
+    var interval = 2000 //2 seconds
+    function repeat(){
+      setTimeout(()=>{
+        entry.random(array)
+        counter +=1
+        console.log(counter)
+        if (counter < 10){
+          repeat()
+        }
+      }, interval)
+
+    }
+
+    repeat()
   }
 
   random(array){
+    console.log("Random is called!")
     let lastValue = array[array.length-1]
     let maxV = lastValue + 10
     let minV = lastValue - 10
-    let randomValue = () => {return (Math.floor(Math.random() * (maxV - minV) + minV))} //defins a random value within a range (depends on last value in an array)
+    let randomValue = () => {
+      console.log("RandomValue is called")
+      return (Math.floor(Math.random() * (maxV - minV) + minV))
+    } //defins a random value within a range (depends on last value in an array)
     array.push(randomValue()); //pushes random number within a range depending on previous value
     //return array[array.length-1]
     this.addNewValue(array)
@@ -112,6 +131,51 @@ export default class TradeSimulatorContainer extends Component {
       }
     })
   }
+
+  callApi(action){
+    const URL = 'http://localhost:3000/actions'
+    fetch(URL, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({user_action: {
+        user_id: 1,
+        income: 100,
+        total: 1100,
+        action: `${action}`,
+        current_price: 5
+      }})
+    })
+    .then(res=> console.log(res))
+  }
+
+  // fetch('http://localhost:3000/stories', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({story: {
+  //       original_content: this.state.originalContent,
+  //       title: this.state.title,
+  //       translated_content: this.state.translatedContent
+  //     }})
+  //   })
+  //   .then(res => res.json())
+  //   .then(function(data){
+  //     //console.log('data: ', data);
+  //     entry.setState(prevState => {
+  //       return {
+  //         stories: [...prevState.stories, data],
+  //         originalContent: "",
+  //         translatedContent: "",
+  //         title: ""
+  //       }
+  //     })
+  //   })
+
 
   handleSell(){
     let lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
