@@ -12,28 +12,30 @@ export default class TradeSimulatorContainer extends Component {
         shares: 0
       },
       actions: [],
+      sharesToBuy: 1,
+      speed: 5000, //1 min, 30 sec, 15 sec, 5 sec, 2 sec
       data: { //object for chart.js
         labels: [],
         datasets: [
           {
             label: '$',
             fill: false,
-            lineTension: 0.1,
+            lineTension: 0.0,
             backgroundColor: null,
-            borderColor: 'rgba(75,192,192,1)',
+            borderColor: 'rgb(255,0,0)',
             borderCapStyle: 'butt',
             borderDash: [],
             borderWidth: 2,
             borderDashOffset: 0.0,
             borderJoinStyle: 'miter',
-            pointBorderColor: 'rgba(75,192,192,1)',
-            pointBackgroundColor: '#fff',
+            pointBorderColor: 'rgb(255,0,0)',
+            pointBackgroundColor: 'rgb(255,0,0)',
             pointBorderWidth: 1,
             pointHoverRadius: 5,
             pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-            pointHoverBorderColor: 'rgba(220,220,220,1)',
+            pointHoverBorderColor: 'rgba(75,192,192,1)',
             pointHoverBorderWidth: 2,
-            pointRadius: 2,
+            pointRadius: 1,
             pointHitRadius: 10,
             data: []
           }
@@ -42,21 +44,32 @@ export default class TradeSimulatorContainer extends Component {
     }
   }
 
+  //renders all actions
+  componentDidMount(){
+      fetch('http://localhost:3000/actions', {
+      method: 'GET',
+    })
+      .then(res => res.json())
+      .then(data => this.setState({
+        actions: data
+      }))
+  }
+
   generator(){
+    var array = []
     var entry = this
     var counter = 0
-    var array = [Math.floor(Math.random() * 80 + 10)]  //generates a start point
+    array.push(Math.floor(Math.random() * 80 + 10))  //generates a start point
     console.log("Array startpoint is: ", array[0])
-    var interval = 2000 //2 seconds
     function repeat(){
       setTimeout(()=>{
         entry.random(array)
         counter +=1
         console.log(counter)
-        if (counter < 60){
+        if (counter < 1000){
           repeat()
         }
-      }, interval)
+      }, entry.state.speed)
     }
     repeat()
   }
@@ -67,7 +80,7 @@ export default class TradeSimulatorContainer extends Component {
     let minV = lastValue - 10
     let randomValue = () => {
       var value = Math.floor(Math.random() * (maxV - minV) + minV)
-      if (value <= 0){
+      if (value <= 0 || value > array.first * 2){
         return (Math.floor(Math.random() * (60 - 20) + 20))
       } else {return (value)}
 
@@ -75,7 +88,7 @@ export default class TradeSimulatorContainer extends Component {
     array.push(randomValue()); //pushes random number within a range depending on previous value
     //return array[array.length-1]
     this.addNewValue(array)
-    // this.chartDataLength()
+    this.chartDataLength()
   }
 
   addNewValue(array){
@@ -96,7 +109,7 @@ export default class TradeSimulatorContainer extends Component {
             borderDashOffset: 0.0,
             borderJoinStyle: 'miter',
             pointBorderColor: 'rgb(255,0,0)',
-            pointBackgroundColor: '#fff',
+            pointBackgroundColor: 'rgb(255,0,0)',
             pointBorderWidth: 1,
             pointHoverRadius: 5,
             pointHoverBackgroundColor: 'rgb(255,0,0)',
@@ -113,30 +126,33 @@ export default class TradeSimulatorContainer extends Component {
   }
 
   handleBuy(){
-    let lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
+    var lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
+    var paid = lastValue * this.state.sharesToBuy
     this.setState({
       user: {
         name: "Anna",
-        wallet: this.state.user.wallet - lastValue,
-        shares: this.state.user.shares + 1
+        wallet: this.state.user.wallet - paid,
+        shares: parseInt(this.state.user.shares) + parseInt(this.state.sharesToBuy)
       }
     })
-    this.callApi("bought", -lastValue)
+    this.callApi("bought", -paid, lastValue)
+
   }
 
   handleSell(){
     let lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
+    var paid = lastValue * this.state.sharesToBuy
     this.setState({
       user: {
         name: "Anna",
-        wallet: this.state.user.wallet + lastValue,
-        shares: this.state.user.shares - 1
+        wallet: this.state.user.wallet + paid,
+        shares: parseInt(this.state.user.shares) - parseInt(this.state.sharesToBuy)
       }
     })
-    this.callApi("sold", lastValue)
+    this.callApi("sold", paid, lastValue)
   }
 
-  callApi(action, lastValue){
+  callApi(action, paid, lastValue){
     const entry = this
     fetch('http://localhost:3000/actions', {
       method: 'POST',
@@ -146,10 +162,11 @@ export default class TradeSimulatorContainer extends Component {
       },
       body: JSON.stringify({user_action: {
         user_id: 1,
-        income: lastValue,
-        total: this.state.user.wallet - lastValue,
+        income: paid,
+        total: this.state.user.wallet - paid,
         action: `${action}`,
-        current_price: Math.abs(lastValue)
+        current_price: Math.abs(lastValue),
+        shares: this.state.sharesToBuy
       }})
     })
     .then(res=> res.json())
@@ -162,52 +179,98 @@ export default class TradeSimulatorContainer extends Component {
     })
   }
 
+  chartDataLength(){
+    var chartData = this.state.data.datasets[0].data
+    var labels = this.state.data.labels
+    if (chartData.length >=60){
+      chartData.shift()
+      labels.shift()
+      this.setState({
+        data: { //object for chart.js
+          labels: labels,
+          datasets: [
+            {
+              label: '$',
+              fill: false,
+              lineTension: 0.1,
+              backgroundColor: null,
+              borderColor: 'rgb(255,0,0)',
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderWidth: 2,
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: 'rgb(255,0,0)',
+              pointBackgroundColor: 'rgb(255,0,0)',
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: 'rgb(255,0,0)',
+              pointHoverBorderColor: 'rgba(220,220,220,1)',
+              pointHoverBorderWidth: 2,
+              pointRadius: 2,
+              pointHitRadius: 10,
+              data: chartData
+            }
+          ]
+        }
+      })
+    }
+  }
+
+  handleChange(e){
+    e.preventDefault()
+    this.setState({
+      sharesToBuy: parseInt(e.target.value)
+    })
+  }
+
+  decreaseSpeed(){
+    if (this.state.speed === 30000){
+      this.setState({
+        speed: 60000
+      })
+    } else if (this.state.speed === 15000){
+      this.setState({
+        speed: 30000
+      })
+    } else if (this.state.speed === 5000){
+      this.setState({
+        speed: 15000
+      })
+    } else if (this.state.speed === 2000){
+      this.setState({
+        speed: 5000
+      })
+    }
+  }
+
+  increaseSpeed(){
+    if (this.state.speed === 60000){
+      this.setState({
+        speed: 30000
+      })
+    } else if (this.state.speed === 30000){
+      this.setState({
+        speed: 15000
+      })
+    } else if (this.state.speed === 15000){
+      this.setState({
+        speed: 5000
+      })
+    } else if (this.state.speed === 5000){
+      this.setState({
+        speed: 2000
+      })
+    }
+  }
+
   render(){
     return(
       <div>
         <h1>Welcome to Trade Simulator</h1>
         <User user={this.state.user}/>
-        <TradeGame generator={this.generator.bind(this)} buy={this.handleBuy.bind(this)} sell={this.handleSell.bind(this)} state={this.state}/>
+        <TradeGame generator={this.generator.bind(this)} buy={this.handleBuy.bind(this)} sell={this.handleSell.bind(this)} state={this.state} handleChange={this.handleChange.bind(this)} faster={this.increaseSpeed.bind(this)} slowlier={this.decreaseSpeed.bind(this)}/>
       </div>
     )
   }
 }
-
-// chartDataLength(){
-//   var chartData = this.state.data.datasets[0].data
-//   if (chartData.length >= 4){
-//     debugger
-//     var cut = chartData.length - 3
-//     var newValues = this.state.data.datasets[0].data.shift()
-//     var newLabels = this.state.data.labels.shift()
-//     this.setState({
-//       data: { //object for chart.js
-//         labels: newLabels,
-//         datasets: [
-//           {
-//             label: '$',
-//             fill: false,
-//             lineTension: 0.1,
-//             backgroundColor: null,
-//             borderColor: 'rgba(75,192,192,1)',
-//             borderCapStyle: 'butt',
-//             borderDash: [],
-//             borderWidth: 2,
-//             borderDashOffset: 0.0,
-//             borderJoinStyle: 'miter',
-//             pointBorderColor: 'rgba(75,192,192,1)',
-//             pointBackgroundColor: '#fff',
-//             pointBorderWidth: 1,
-//             pointHoverRadius: 5,
-//             pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-//             pointHoverBorderColor: 'rgba(220,220,220,1)',
-//             pointHoverBorderWidth: 2,
-//             pointRadius: 2,
-//             pointHitRadius: 10,
-//             data: newValues
-//           }
-//         ]
-//       }
-//     })
-//   }
-// }
