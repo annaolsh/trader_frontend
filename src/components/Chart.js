@@ -7,7 +7,7 @@ export default class Chart extends Component {
     return (
       <div>
         <br/>
-        <Line data={this.props.data} width={100} height={350} options={{maintainAspectRatio: false, legend: {
+        <Line data={this.props.data} width={100} height={300} options={{maintainAspectRatio: false, legend: {
             display: false}} }/>
       </div>
     )
