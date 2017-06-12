@@ -1,10 +1,12 @@
 import React from 'react'
 import Chart from '../components/Chart.js';
+import ActionList from '../components/ActionList.js';
 
 export default (props) => {
   const sharesSentence = props.state.user.shares < 0 ? "You own shares!": null
   return(
     <div>
+      <h2>Microsoft</h2>
       <button onClick={props.generator}>Play!</button>
       <br/>
       <button onClick={props.slowlier}> Slowlier </button>
@@ -20,12 +22,7 @@ export default (props) => {
       </form>
 
       <h2>{props.state.user.shares} shares. {sharesSentence}</h2>
-      {props.state.actions.map(action => {
-        var date = action.created_at.slice(0, 10) + " " + action.created_at.slice(11, 19)
-        return(
-          <p>{date} You {action.action} {props.state.sharesToBuy} stocks for ${action.current_price}/stock. Your profit is ${action.income}.</p>
-        )
-      }).reverse()}
+      <ActionList actionList = {props.state.actions} />
     </div>
   )
 }

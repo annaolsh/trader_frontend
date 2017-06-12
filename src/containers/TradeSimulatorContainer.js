@@ -14,6 +14,7 @@ export default class TradeSimulatorContainer extends Component {
       actions: [],
       sharesToBuy: 1,
       speed: 5000, //1 min, 30 sec, 15 sec, 5 sec, 2 sec
+      firstValue: 0,
       data: { //object for chart.js
         labels: [],
         datasets: [
@@ -56,10 +57,12 @@ export default class TradeSimulatorContainer extends Component {
   }
 
   generator(){
-    var array = []
+    //this.firstValueGenerator()
+    //var array = [this.state.firstValue]
+    var array = [(parseFloat((Math.random() * 80 + 10).toFixed(4)))]
     var entry = this
     var counter = 0
-    array.push(Math.floor(Math.random() * 80 + 10))  //generates a start point
+    //array.push(parseFloat((Math.random() * 80 + 10).toFixed(4)))  //generates a start point
     console.log("Array startpoint is: ", array[0])
     function repeat(){
       setTimeout(()=>{
@@ -74,14 +77,25 @@ export default class TradeSimulatorContainer extends Component {
     repeat()
   }
 
+  firstValueGenerator(){
+    fetch('https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=UBW6')
+      .then(res => res.json())
+      .then(data => {
+        var timeSeries = data["Time Series (1min)"]
+        this.setState({
+          firstValue: timeSeries[Object.keys(timeSeries)[0]]["4. close"]
+        })
+      })
+  }
+
   random(array){
     let lastValue = array[array.length-1]
     let maxV = lastValue + 10
     let minV = lastValue - 10
     let randomValue = () => {
-      var value = Math.floor(Math.random() * (maxV - minV) + minV)
-      if (value <= 0 || value > array.first * 2){
-        return (Math.floor(Math.random() * (60 - 20) + 20))
+      var value = parseFloat((Math.random() * (maxV - minV) + minV).toFixed(4))
+      if (value <= 0 || value > array[0] * 4){
+        return (parseFloat((Math.random() * (60 - 20) + 20).toFixed(4)))
       } else {return (value)}
 
     } //defins a random value within a range (depends on last value in an array)
@@ -266,8 +280,7 @@ export default class TradeSimulatorContainer extends Component {
 
   render(){
     return(
-      <div>
-        <h1>Welcome to Trade Simulator</h1>
+      <div id="wrapper">
         <User user={this.state.user}/>
         <TradeGame generator={this.generator.bind(this)} buy={this.handleBuy.bind(this)} sell={this.handleSell.bind(this)} state={this.state} handleChange={this.handleChange.bind(this)} faster={this.increaseSpeed.bind(this)} slowlier={this.decreaseSpeed.bind(this)}/>
       </div>
