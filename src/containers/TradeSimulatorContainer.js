@@ -3,17 +3,12 @@ import User from '../components/User.js';
 import TradeGame from '../components/TradeGame.js';
 
 export default class TradeSimulatorContainer extends Component {
-  constructor(){
+  constructor(props){
     super()
     this.state = {
-      user: {
-        name: 'Anna',
-        wallet: 1000,
-        shares: 0
-      },
       actions: [],
       sharesToBuy: 1,
-      speed: 5000, //1 min, 30 sec, 15 sec, 5 sec, 2 sec
+      speed: 2000, //1 min, 30 sec, 15 sec, 5 sec, 2 sec
       firstValue: 0,
       data: { //object for chart.js
         labels: [],
@@ -47,32 +42,36 @@ export default class TradeSimulatorContainer extends Component {
 
   //renders all actions
   componentDidMount(){
-      fetch('http://localhost:3000/actions', {
-      method: 'GET',
+    fetch(`http://localhost:3000/users/${localStorage.id}`, {
+      headers: {
+      'Authorization': localStorage.getItem('jwt')
+      }
     })
       .then(res => res.json())
-      .then(data => this.setState({
-        actions: data
-      }))
+      .then(data => {
+        this.setState({
+          actions: data.user_actions
+        })
+      })
   }
 
   generator(){
     //this.firstValueGenerator()
     //var array = [this.state.firstValue]
     var array = [(parseFloat((Math.random() * 80 + 10).toFixed(4)))]
-    var entry = this
+    var component = this
     var counter = 0
     //array.push(parseFloat((Math.random() * 80 + 10).toFixed(4)))  //generates a start point
     console.log("Array startpoint is: ", array[0])
     function repeat(){
       setTimeout(()=>{
-        entry.random(array)
+        component.random(array)
         counter +=1
         console.log(counter)
         if (counter < 1000){
           repeat()
         }
-      }, entry.state.speed)
+      }, component.state.speed)
     }
     repeat()
   }
@@ -144,30 +143,32 @@ export default class TradeSimulatorContainer extends Component {
     var paid = lastValue * this.state.sharesToBuy
     this.setState({
       user: {
-        name: "Anna",
-        wallet: this.state.user.wallet - paid,
-        shares: parseInt(this.state.user.shares) + parseInt(this.state.sharesToBuy)
+        name: this.props.currentUser.username,
+        wallet: parseFloat((this.props.currentUser.wallet - paid).toFixed(4)) ,
+        shares: parseInt(this.props.currentUser.shares) + parseInt(this.state.sharesToBuy)
       }
-    })
-    this.callApi("bought", -paid, lastValue)
-
+    }, () => this.callApi("bought"))
   }
 
   handleSell(){
-    let lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
+    var lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
     var paid = lastValue * this.state.sharesToBuy
     this.setState({
       user: {
-        name: "Anna",
-        wallet: this.state.user.wallet + paid,
-        shares: parseInt(this.state.user.shares) - parseInt(this.state.sharesToBuy)
+          name: this.props.currentUser.username,
+          wallet: parseFloat((this.props.currentUser.wallet + paid).toFixed(4)) ,
+          shares: parseInt(this.props.currentUser.shares) - parseInt(this.state.sharesToBuy)
       }
-    })
-    this.callApi("sold", paid, lastValue)
+    } , () => this.callApi("sold"))
   }
 
-  callApi(action, paid, lastValue){
-    const entry = this
+  callApi(action){
+    var paid;
+    let lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
+    if (action === "bought"){
+      var paid = -lastValue * this.state.sharesToBuy
+    } else {var paid = lastValue * this.state.sharesToBuy}
+    const component = this
     fetch('http://localhost:3000/actions', {
       method: 'POST',
       headers: {
@@ -175,22 +176,24 @@ export default class TradeSimulatorContainer extends Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({user_action: {
-        user_id: 1,
+        user_id: this.props.currentUser.id,
         income: paid,
-        total: this.state.user.wallet - paid,
         action: `${action}`,
-        current_price: Math.abs(lastValue),
-        shares: this.state.sharesToBuy
+        current_price: parseFloat((lastValue).toFixed(4)),
+        shares: this.state.sharesToBuy,
+        wallet: this.state.user.wallet
       }})
     })
     .then(res=> res.json())
     .then(function(data){
-      entry.setState(prevState => {
+      component.props.changeWalletAmount(data.wallet.amount)
+      component.setState(prevState => {
         return {
-            actions: [...prevState.actions, data]
+            actions: [...prevState.actions, data.action]
         }
       })
     })
+
   }
 
   chartDataLength(){
@@ -281,8 +284,22 @@ export default class TradeSimulatorContainer extends Component {
   render(){
     return(
       <div id="wrapper">
-        <User user={this.state.user}/>
-        <TradeGame generator={this.generator.bind(this)} buy={this.handleBuy.bind(this)} sell={this.handleSell.bind(this)} state={this.state} handleChange={this.handleChange.bind(this)} faster={this.increaseSpeed.bind(this)} slowlier={this.decreaseSpeed.bind(this)}/>
+        <User user={this.props.currentUser}/>
+        {/* <GameInfo gameData={} />
+        <Chart chartData={} />
+        <GameForm /> */}
+        <TradeGame
+          generator={this.generator.bind(this)}
+          buy={this.handleBuy.bind(this)}
+          sell={this.handleSell.bind(this)}
+          speed={this.state.speed}
+          sharesToBuy={this.state.sharesToBuy}
+          chartData={this.state.data}
+          handleChange={this.handleChange.bind(this)}
+          faster={this.increaseSpeed.bind(this)}
+          slowlier={this.decreaseSpeed.bind(this)}
+          actions={this.state.actions}
+        />
       </div>
     )
   }

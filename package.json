@@ -7,7 +7,8 @@
     "highcharts": "^5.0.12",
     "react": "^15.5.4",
     "react-chartjs-2": "^2.1.0",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "react-router-dom": "^4.1.1"
   },
   "devDependencies": {
     "react-scripts": "1.0.7"
