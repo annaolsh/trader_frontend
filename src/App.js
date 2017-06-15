@@ -6,6 +6,7 @@ import NavBar from './components/NavBar.js';
 import LogInForm from './user/LogInForm.js';
 import SignUpForm from './user/SignUpForm.js';
 import LogOut from './user/LogOut.js';
+import Home from './components/Home.js';
 import { logIn, signUp } from './components/apiCalls.js'
 
 class App extends Component {
@@ -17,6 +18,7 @@ class App extends Component {
   }
 
   componentDidMount(){
+    var component = this
     if(!!localStorage.jwt){
       fetch(`http://localhost:3000/users/${localStorage.id}`, {
         headers: {
@@ -25,14 +27,14 @@ class App extends Component {
       })
         .then(res => res.json())
         .then(data => {
-          this.setState({
+          component.setState({
             user: {
-              id: data.id,
-              username: data.username,
-              wallet: data.wallets[0].amount,
-              shares: data.shares
+              id: data.user.id,
+              username: data.user.username,
+              wallet: data.wallet,
+              shares: data.user.shares
             }
-          })
+          }, console.log("App state: ", this.state))
         })
     }
   }
@@ -75,10 +77,12 @@ class App extends Component {
   }
 
   render() {
+
     return (
       <div>
         <NavBar />
         <Switch>
+          <Route path='/home' render={() => <Home />} />
           <Route path='/login' render={() => <LogInForm onSubmit={this.handleLoginSubmit.bind(this)}/>} />
           <Route path='/logout' render={() => <LogOut />} />
           <Route path='/signup' render={() => <SignUpForm handleSignUp={this.handleSignUp.bind(this)}/>} />
