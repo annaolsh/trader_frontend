@@ -7,6 +7,7 @@ class TradeSimulatorContainer extends Component {
   constructor(props){
     super()
     this.state = {
+      firstValue: 0,
       canBuyStock: true,
       gameIsOn: false,
       actions: [],
@@ -69,7 +70,11 @@ class TradeSimulatorContainer extends Component {
     }, console.log("game on", this.state.gameIsOn))
   }
 
+
   generator(){
+    var component = this
+    var counter = 0
+    var array = []
     function repeat(){
       setTimeout(()=>{
         component.random(array)
@@ -79,48 +84,40 @@ class TradeSimulatorContainer extends Component {
         }
       }, component.state.speed)
     }
-    var array = [(parseFloat((Math.random() * 80 + 10).toFixed(4)))]
-    var component = this
-    var counter = 0
-    console.log("Array startpoint is: ", array[0])
-
-    this.setState({
-      data: { //object for chart.js
-        labels: [1],
-        datasets: [
-          {
-            label: '$',
-            fill: false,
-            lineTension: 0.0,
-            backgroundColor: null,
-            borderColor: 'rgb(255,0,0)',
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderWidth: 2,
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: 'rgb(255,0,0)',
-            pointBackgroundColor: 'rgb(255,0,0)',
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-            pointHoverBorderColor: 'rgba(75,192,192,1)',
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data: [array[0]]
-          }]}
-    }, repeat())
-  }
-
-  firstValueGenerator(){
     fetch('https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=UBW6')
       .then(res => res.json())
       .then(data => {
         var timeSeries = data["Time Series (1min)"]
-        this.setState({
-          firstValue: timeSeries[Object.keys(timeSeries)[0]]["4. close"]
-        })
+        var numOfLifeValues = Object.keys(timeSeries).length-1
+          //firstValue: parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(4)
+        array = [parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(4)]
+          component.setState({
+            data: { //object for chart.js
+              labels: [1],
+              datasets: [
+                {
+                  label: '$',
+                  fill: false,
+                  lineTension: 0.0,
+                  backgroundColor: null,
+                  borderColor: 'rgb(255,0,0)',
+                  borderCapStyle: 'butt',
+                  borderDash: [],
+                  borderWidth: 2,
+                  borderDashOffset: 0.0,
+                  borderJoinStyle: 'miter',
+                  pointBorderColor: 'rgb(255,0,0)',
+                  pointBackgroundColor: 'rgb(255,0,0)',
+                  pointBorderWidth: 1,
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+                  pointHoverBorderColor: 'rgba(75,192,192,1)',
+                  pointHoverBorderWidth: 2,
+                  pointRadius: 1,
+                  pointHitRadius: 10,
+                  data: [parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(4)]
+                }]}
+          }, repeat())
       })
   }
 
@@ -135,7 +132,6 @@ class TradeSimulatorContainer extends Component {
       } else {return (value)}
     } //defins a random value within a range (depends on last value in an array)
     array.push(randomValue()); //pushes random number within a range depending on previous value
-    //return array[array.length-1]
     this.addNewValue(array)
     this.chartDataLength()
     this.upOrDown(array)

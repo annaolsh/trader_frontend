@@ -24,8 +24,8 @@ export default (props) => {
       <Chart data={props.chartData}/>
       <h2>{props.chartData.datasets[0].data[props.chartData.datasets[0].data.length-1]} {showGrowth}</h2>
 
-      <button disabled={!props.gameIsOn} onClick={props.buy}>Buy!</button>
-      <button disabled={!props.gameIsOn} onClick={props.sell}>Sell!</button>
+      <button className="raise" disabled={!props.gameIsOn} onClick={props.buy}>Buy!</button>
+      <button className="raise" disabled={!props.gameIsOn} onClick={props.sell}>Sell!</button>
       <input type="number" min="0" step="1" value={props.sharesToBuy} onChange={props.handleChange}/>
       <label>Shares</label> {`  ${canBuyStock}`}
       <ActionList actionList = {props.actions} />
