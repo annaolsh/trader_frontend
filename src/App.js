@@ -37,13 +37,20 @@ class App extends Component {
     }
   }
 
-  handleSignUp(params){
-    signUp(params)
+  handleSignUp(username, password){
+    signUp(username, password)
+    .then(res => {
+      if(res.error){
+        return
+      }
+      localStorage.setItem('jwt', res.token)
+      localStorage.setItem('id', res.user.id)
+      this.setState({user: res.user})
+      this.props.history.push('/game')
+    })
   }
 
   handleLoginSubmit(username, password) {
-    console.log('handleLoginSubmit called', this)
-
     logIn(username, password)
       .then(res => {
         if (res.error) {
@@ -74,7 +81,7 @@ class App extends Component {
         <Switch>
           <Route path='/login' render={() => <LogInForm onSubmit={this.handleLoginSubmit.bind(this)}/>} />
           <Route path='/logout' render={() => <LogOut />} />
-          <Route path='/signup' render={() => <SignUpForm handleSignUp={this.handleSignUp}/>} />
+          <Route path='/signup' render={() => <SignUpForm handleSignUp={this.handleSignUp.bind(this)}/>} />
           <Route path='/game' render={() =>
             <TradeSimulatorContainer
               currentUser={this.state.user}

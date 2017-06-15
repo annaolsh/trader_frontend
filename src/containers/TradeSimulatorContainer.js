@@ -72,7 +72,6 @@ class TradeSimulatorContainer extends Component {
       setTimeout(()=>{
         component.random(array)
         counter +=1
-        console.log(counter)
         if (counter < 1000){
           repeat()
         }
