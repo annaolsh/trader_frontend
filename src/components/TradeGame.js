@@ -3,6 +3,7 @@ import Chart from '../components/Chart.js';
 import ActionList from '../components/ActionList.js';
 
 export default (props) => {
+
   
   //const sharesSentence = props.user.shares < 0 ? "You own shares!": null
   return(
