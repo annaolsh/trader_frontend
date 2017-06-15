@@ -13,6 +13,7 @@ class TradeSimulatorContainer extends Component {
       sharesToBuy: 1,
       speed: 2000, //1 min, 30 sec, 15 sec, 5 sec, 2 sec
       firstValue: 0,
+      growth: 0,
       data: { //object for chart.js
         labels: [],
         datasets: [
@@ -69,14 +70,6 @@ class TradeSimulatorContainer extends Component {
   }
 
   generator(){
-
-    //this.firstValueGenerator()
-    //var array = [this.state.firstValue]
-    var array = [(parseFloat((Math.random() * 80 + 10).toFixed(4)))]
-    var component = this
-    var counter = 0
-    //array.push(parseFloat((Math.random() * 80 + 10).toFixed(4)))  //generates a start point
-    console.log("Array startpoint is: ", array[0])
     function repeat(){
       setTimeout(()=>{
         component.random(array)
@@ -86,7 +79,38 @@ class TradeSimulatorContainer extends Component {
         }
       }, component.state.speed)
     }
-    repeat()
+    var array = [(parseFloat((Math.random() * 80 + 10).toFixed(4)))]
+    var component = this
+    var counter = 0
+    console.log("Array startpoint is: ", array[0])
+
+    this.setState({
+      data: { //object for chart.js
+        labels: [1],
+        datasets: [
+          {
+            label: '$',
+            fill: false,
+            lineTension: 0.0,
+            backgroundColor: null,
+            borderColor: 'rgb(255,0,0)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderWidth: 2,
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: 'rgb(255,0,0)',
+            pointBackgroundColor: 'rgb(255,0,0)',
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+            pointHoverBorderColor: 'rgba(75,192,192,1)',
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: [array[0]]
+          }]}
+    }, repeat())
   }
 
   firstValueGenerator(){
@@ -109,15 +133,16 @@ class TradeSimulatorContainer extends Component {
       if (value <= 0 || value > array[0] * 4){
         return (parseFloat((Math.random() * (60 - 20) + 20).toFixed(4)))
       } else {return (value)}
-
     } //defins a random value within a range (depends on last value in an array)
     array.push(randomValue()); //pushes random number within a range depending on previous value
     //return array[array.length-1]
     this.addNewValue(array)
     this.chartDataLength()
+    this.upOrDown(array)
   }
 
   addNewValue(array){
+
     var chartData = this.state.data.datasets[0].data
     var labels = this.state.data.labels
     this.setState({
@@ -149,6 +174,18 @@ class TradeSimulatorContainer extends Component {
         ]
       }
     })
+  }
+
+  upOrDown(array){
+    if(array.length >=2){
+      var lastValue = array[array.length-1]
+      var previousValue = array[array.length-2]
+      var growth = ((lastValue - previousValue)/lastValue * 100).toFixed(2)
+      this.setState({
+        growth: growth
+      })
+    }
+
   }
 
   handleBuy(){
@@ -317,18 +354,6 @@ class TradeSimulatorContainer extends Component {
     }
   }
 
-  // canBuyStock({
-  //   this.setState({
-  //     canBuyStock: true
-  //   })
-  // })
-  //
-  // canNotBuyStock(){
-  //   this.setState({
-  //     canBuyStock: false
-  //   })
-  // }
-
   render(){
 
     return(
@@ -352,6 +377,7 @@ class TradeSimulatorContainer extends Component {
           actions={this.state.actions}
           user={this.props.currentUser}
           canBuyStock={this.state.canBuyStock}
+          growth={this.state.growth}
         />
       </div>
     )
