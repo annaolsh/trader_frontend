@@ -2,36 +2,35 @@ import React from 'react'
 import Chart from '../components/Chart.js';
 import ActionList from '../components/ActionList.js';
 
+
+
 export default (props) => {
+  function onClick(){
+    props.gameIsOnFunction();
+    props.generator()
+  }
 
-
-  //const sharesSentence = props.user.shares < 0 ? "You own shares!": null
+  const canBuyStock = !!props.canBuyStock ? null : "Not enough $. Try to sell first"
+//  const sharesSentence = props.currentUser.shares < 0 ? "You own shares!": null
   return(
     <div>
-      <h2>Microsoft</h2>
-      // Gameplay Information
-      <button onClick={props.generator}>Play!</button>
+      <button onClick={onClick}>Play!</button>
       <br/>
       <button onClick={props.slowlier}> Slowlier </button>
       <button onClick={props.faster}> Faster </button>
       <h3>Speed is {props.speed/1000} sec</h3>
 
-      // Chart
       <Chart data={props.chartData}/>
+      <h2>{props.chartData.datasets[0].data[props.chartData.datasets[0].data.length-1]}</h2>
 
-      // Game Form
-      <button onClick={props.buy}>Buy!</button>
-      <button onClick={props.sell}>Sell!</button>
+      <button disabled={!props.gameIsOn} onClick={props.buy}>Buy!</button>
+      <button disabled={!props.gameIsOn} onClick={props.sell}>Sell!</button>
       <input type="number" min="0" step="1" value={props.sharesToBuy} onChange={props.handleChange}/>
       <label>Shares</label>
-
-      {/* <h2>{props.state.user.shares} shares. {sharesSentence}</h2> */}
+      {canBuyStock}
       <ActionList actionList = {props.actions} />
     </div>
   )
 }
-
-
 //
-// <button onClick={() => props.handleTransaction('buy')}>Buy!</button>
-// <button onClick={() => props.handleTransaction('sell')}>Sell!</button>
+  //<h2>{props.currentUser.shares} shares. {sharesSentence}</h2>

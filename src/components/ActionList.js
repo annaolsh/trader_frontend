@@ -5,30 +5,30 @@ import Action from '../components/Action.js';
 export default (props) => {
   return(
     <div>
-      <table class="table-fill">
-        <tbody class="table-hover">
+      <table className="table-fill">
+        <tbody className="table-hover">
           <tr>
-            <th class="text-left">
+            <th className="text-left">
               <h3>
                 Date & Time
               </h3>
             </th>
-            <th class="text-left">
+            <th className="text-left">
               <h3>
                 Action
               </h3>
             </th>
-            <th class="text-left">
+            <th className="text-left">
               <h3>
                 # of stocks
               </h3>
             </th>
-            <th class="text-left">
+            <th className="text-left">
               <h3>
                 Price for stock
               </h3>
             </th>
-            <th class="text-left">
+            <th className="text-left">
               <h3>
                 Profit
               </h3>

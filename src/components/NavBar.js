@@ -6,7 +6,7 @@ var links = () => {
     return <li><Link to="/logout">Log Out</Link></li>
   } else {
     return (
-      <div>
+      <div className="nav navbar-nav">
         <li><Link to="/login">Log In</Link></li>
         <li><Link to="/signup">Sign Up</Link></li>
       </div>
