@@ -5,6 +5,7 @@ import TradeSimulatorContainer from './containers/TradeSimulatorContainer.js';
 import NavBar from './components/NavBar.js';
 import LogInForm from './user/LogInForm.js';
 import SignUpForm from './user/SignUpForm.js';
+import LogOut from './user/LogOut.js';
 import { logIn, signUp } from './components/apiCalls.js'
 
 class App extends Component {
@@ -16,22 +17,24 @@ class App extends Component {
   }
 
   componentDidMount(){
-    fetch(`http://localhost:3000/users/${localStorage.id}`, {
-      headers: {
-      'Authorization': localStorage.getItem('jwt')
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        this.setState({
-          user: {
-            id: data.id,
-            username: data.username,
-            wallet: data.wallets[0].amount,
-            shares: data.shares
-          }
-        })
+    if(!!localStorage.jwt){
+      fetch(`http://localhost:3000/users/${localStorage.id}`, {
+        headers: {
+        'Authorization': localStorage.getItem('jwt')
+        }
       })
+        .then(res => res.json())
+        .then(data => {
+          this.setState({
+            user: {
+              id: data.id,
+              username: data.username,
+              wallet: data.wallets[0].amount,
+              shares: data.shares
+            }
+          })
+        })
+    }
   }
 
   handleSignUp(params){
@@ -70,10 +73,12 @@ class App extends Component {
         <NavBar />
         <Switch>
           <Route path='/login' render={() => <LogInForm onSubmit={this.handleLoginSubmit.bind(this)}/>} />
+          <Route path='/logout' render={() => <LogOut />} />
           <Route path='/signup' render={() => <SignUpForm handleSignUp={this.handleSignUp}/>} />
-          <Route path='/game' render={() => <TradeSimulatorContainer
-                currentUser={this.state.user}
-                changeWalletAmount={this.changeWalletAmount.bind(this)}/>} />
+          <Route path='/game' render={() =>
+            <TradeSimulatorContainer
+              currentUser={this.state.user}
+              changeWalletAmount={this.changeWalletAmount.bind(this)}/>} />
         </Switch>
       </div>
     )

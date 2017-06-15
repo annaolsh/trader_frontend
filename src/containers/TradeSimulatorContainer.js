@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import User from '../components/User.js';
 import TradeGame from '../components/TradeGame.js';
+import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom'
 
-export default class TradeSimulatorContainer extends Component {
+class TradeSimulatorContainer extends Component {
   constructor(props){
     super()
     this.state = {
@@ -42,17 +43,21 @@ export default class TradeSimulatorContainer extends Component {
 
   //renders all actions
   componentDidMount(){
-    fetch(`http://localhost:3000/users/${localStorage.id}`, {
-      headers: {
-      'Authorization': localStorage.getItem('jwt')
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        this.setState({
-          actions: data.user_actions
-        })
+    if(!localStorage.jwt){
+      return this.props.history.push('/login')
+    } else {
+      fetch(`http://localhost:3000/users/${localStorage.id}`, {
+        headers: {
+        'Authorization': localStorage.getItem('jwt')
+        }
       })
+        .then(res => res.json())
+        .then(data => {
+          this.setState({
+            actions: data.user_actions
+          })
+        })
+    }
   }
 
   generator(){
@@ -304,3 +309,4 @@ export default class TradeSimulatorContainer extends Component {
     )
   }
 }
+export default withRouter(TradeSimulatorContainer)
