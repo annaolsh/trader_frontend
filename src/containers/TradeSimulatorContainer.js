@@ -7,6 +7,7 @@ class TradeSimulatorContainer extends Component {
   constructor(props){
     super()
     this.state = {
+      canBuyStock: true,
       gameIsOn: false,
       actions: [],
       sharesToBuy: 1,
@@ -152,20 +153,43 @@ class TradeSimulatorContainer extends Component {
 
   handleBuy(){
     var lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
-    var paid = lastValue * this.state.sharesToBuy
-    this.setState({
-      user: {
-        name: this.props.currentUser.username,
-        wallet: parseFloat((this.props.currentUser.wallet - paid).toFixed(4)) ,
-        shares: parseInt(this.props.currentUser.shares) + parseInt(this.state.sharesToBuy)
-      }
-    }, () => this.callApi("bought"))
+    var wantToPay = lastValue * this.state.sharesToBuy
+    var wallet = this.props.currentUser.wallet
+    //var difference = wallet - wantToPay
+    if(wantToPay <= wallet){ //if user has enough money to buy all stocks user wants
+      var paid = wantToPay
+      this.setState({
+        canBuyStock: true,
+        user: {
+          name: this.props.currentUser.username,
+          wallet: parseFloat((this.props.currentUser.wallet - paid).toFixed(4)) ,
+          shares: parseInt(this.props.currentUser.shares) + parseInt(this.state.sharesToBuy)
+        }
+      }, () => this.callApi("bought"))
+    } else if (wallet > lastValue){ //if cost of 1 stock is less than money in the pocket
+
+      var actuallyCanBuy = Math.floor(wallet / lastValue)
+      var paid = lastValue * actuallyCanBuy
+      this.setState({
+        sharesToBuy: actuallyCanBuy,
+        user: {
+          name: this.props.currentUser.username,
+          wallet: parseFloat((this.props.currentUser.wallet - paid).toFixed(4)) ,
+          shares: parseInt(this.props.currentUser.shares) + parseInt(this.state.sharesToBuy)
+        }
+      }, () => this.callApi("bought"))
+    } else {  //user can not afford a purchase
+      this.setState({
+        canBuyStock: false
+      })
+    }
   }
 
   handleSell(){
     var lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
     var paid = lastValue * this.state.sharesToBuy
     this.setState({
+      canBuyStock: true,
       user: {
           name: this.props.currentUser.username,
           wallet: parseFloat((this.props.currentUser.wallet + paid).toFixed(4)) ,
@@ -293,6 +317,18 @@ class TradeSimulatorContainer extends Component {
     }
   }
 
+  // canBuyStock({
+  //   this.setState({
+  //     canBuyStock: true
+  //   })
+  // })
+  //
+  // canNotBuyStock(){
+  //   this.setState({
+  //     canBuyStock: false
+  //   })
+  // }
+
   render(){
 
     return(
@@ -315,6 +351,7 @@ class TradeSimulatorContainer extends Component {
           slowlier={this.decreaseSpeed.bind(this)}
           actions={this.state.actions}
           user={this.props.currentUser}
+          canBuyStock={this.state.canBuyStock}
         />
       </div>
     )
