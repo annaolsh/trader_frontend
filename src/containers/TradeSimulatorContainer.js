@@ -83,38 +83,52 @@ class TradeSimulatorContainer extends Component {
   }
 
   generator(){
-    debugger
     var component = this
     var counter = 0
+    var liveData = this.state.liveData
+    console.log(liveData)
+    var i = 0
     var array = []
     function repeat(){
       setTimeout(()=>{
-        // if (counter % 5) {
-          component.random(array)
-        // } else {
-        //   component.random(//from api array)
-        // }
+        if (counter % 5) {
+          component.random(array, 'random')
+        } else { //ever fifth loop render liveValue
+          component.random(array, 'liveData', i)
+          i +=1
+            if (i >= 100){
+              i = 0
+            }
+          }
         counter +=1
-        if (counter < 1000){
-          repeat()
-        }
+        repeat()
       }, component.state.speed)
     }
+    repeat()
   }
 
-
-
-  random(array){
-    let lastValue = array[array.length-1]
-    let maxV = lastValue + 2
-    let minV = lastValue - 2
-    let randomValue = () => {
-      var value = parseFloat((Math.random() * (maxV - minV) + minV).toFixed(2))
-      if (value <= 0 || value > array[0] * 4){
-        return (parseFloat((Math.random() * (60 - 20) + 20).toFixed(2)))
-      } else {return (value)}
-    } //defins a random value within a range (depends on last value in an array)
-    array.push(randomValue()); //pushes random number within a range depending on previous value
+  random(array, action, i){
+    console.log("i in the begining: ", i)
+    var liveData = this.state.liveData
+    if (action === 'random'){
+      var lastValue = array[array.length-1]
+      var randomValue = (lastValue) => {
+        var maxV = lastValue + lastValue*0.03
+        var minV = lastValue - lastValue*0.03
+        var value = parseFloat((Math.random() * (maxV - minV) + minV).toFixed(2))
+        if (value <= 0 || value > array[0] * 2){
+          var minV = array[0] - array[0]*0.5
+          var maxV = array[0] + array[0]*0.5
+          return (parseFloat((Math.random() * (maxV - minV) + minV).toFixed(2)))
+        } else {
+          return (value)
+        }
+      } //defins a random value within a range (depends on last value in an array)
+      array.push(randomValue(lastValue)); //pushes random number within a range depending on previous value
+    } else if (action === 'liveData') {
+      array.push(liveData[i])
+      console.log("livedata: ", liveData[i])
+    }
     this.addNewValue(array)
     this.chartDataLength()
     this.upOrDown(array)
