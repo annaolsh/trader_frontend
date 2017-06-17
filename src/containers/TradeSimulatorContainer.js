@@ -86,29 +86,39 @@ class TradeSimulatorContainer extends Component {
     var component = this
     var counter = 0
     var liveData = this.state.liveData
-    console.log(liveData)
+    console.log("livedata", liveData)
     var i = 0
     var array = []
-    function repeat(){
-      setTimeout(()=>{
-        if (counter % 5) {
-          component.random(array, 'random')
-        } else { //ever fifth loop render liveValue
-          component.random(array, 'liveData', i)
-          i +=1
-            if (i >= 100){
-              i = 0
+    if(!liveData){
+      function repeat(){
+        setTimeout(()=>{
+          if (counter % 5) {
+            component.random(array, 'random')
+          } else { //ever fifth loop render liveValue
+            component.random(array, 'liveData', i)
+            i +=1
+              if (i >= 100){
+                i = 0
+              }
             }
-          }
-        counter +=1
-        repeat()
-      }, component.state.speed)
+          counter +=1
+          repeat()
+        }, component.state.speed)
+      }
+      repeat()
+    } else {
+      var array = [parseFloat((Math.random() * (150 - 60) + 60).toFixed(2))]
+      function repeat(){
+        setTimeout(()=>{
+            component.random(array, 'random')
+          repeat()
+        }, component.state.speed)
+      }
+      repeat()
     }
-    repeat()
   }
 
   random(array, action, i){
-    console.log("i in the begining: ", i)
     var liveData = this.state.liveData
     if (action === 'random'){
       var lastValue = array[array.length-1]
@@ -127,7 +137,6 @@ class TradeSimulatorContainer extends Component {
       array.push(randomValue(lastValue)); //pushes random number within a range depending on previous value
     } else if (action === 'liveData') {
       array.push(liveData[i])
-      console.log("livedata: ", liveData[i])
     }
     this.addNewValue(array)
     this.chartDataLength()
