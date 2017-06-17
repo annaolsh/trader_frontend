@@ -59,7 +59,7 @@ class TradeSimulatorContainer extends Component {
         .then(data => {
           this.setState({
             actions: data.actions
-          }, console.log("TradeSimulatorContainer state: ", this.state))
+          })
         })
     }
   }
@@ -67,9 +67,8 @@ class TradeSimulatorContainer extends Component {
   gameIsOn(){
     this.setState({
       gameIsOn: true
-    }, console.log("game on", this.state.gameIsOn))
+    })
   }
-
 
   generator(){
     var component = this
@@ -77,7 +76,11 @@ class TradeSimulatorContainer extends Component {
     var array = []
     function repeat(){
       setTimeout(()=>{
-        component.random(array)
+        // if (counter % 5) {
+          component.random(array)
+        // } else {
+        //   component.random(//from api array)
+        // }
         counter +=1
         if (counter < 1000){
           repeat()
@@ -89,8 +92,9 @@ class TradeSimulatorContainer extends Component {
       .then(data => {
         var timeSeries = data["Time Series (1min)"]
         var numOfLifeValues = Object.keys(timeSeries).length-1
-          //firstValue: parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(4)
-        array = [parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(4)]
+          //firstValue: parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(2)
+        array = [parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(2)]
+        //var array = keys.map( key => parseFloat(timeSeries[key]["4. close"]).toFixed(2)
           component.setState({
             data: { //object for chart.js
               labels: [1],
@@ -115,7 +119,7 @@ class TradeSimulatorContainer extends Component {
                   pointHoverBorderWidth: 2,
                   pointRadius: 1,
                   pointHitRadius: 10,
-                  data: [parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(4)]
+                  data: [parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(2)]
                 }]}
           }, repeat())
       })
@@ -123,12 +127,12 @@ class TradeSimulatorContainer extends Component {
 
   random(array){
     let lastValue = array[array.length-1]
-    let maxV = lastValue + 10
-    let minV = lastValue - 10
+    let maxV = lastValue + 2
+    let minV = lastValue - 2
     let randomValue = () => {
-      var value = parseFloat((Math.random() * (maxV - minV) + minV).toFixed(4))
+      var value = parseFloat((Math.random() * (maxV - minV) + minV).toFixed(2))
       if (value <= 0 || value > array[0] * 4){
-        return (parseFloat((Math.random() * (60 - 20) + 20).toFixed(4)))
+        return (parseFloat((Math.random() * (60 - 20) + 20).toFixed(2)))
       } else {return (value)}
     } //defins a random value within a range (depends on last value in an array)
     array.push(randomValue()); //pushes random number within a range depending on previous value
@@ -138,7 +142,6 @@ class TradeSimulatorContainer extends Component {
   }
 
   addNewValue(array){
-
     var chartData = this.state.data.datasets[0].data
     var labels = this.state.data.labels
     this.setState({
@@ -191,26 +194,20 @@ class TradeSimulatorContainer extends Component {
     //var difference = wallet - wantToPay
     if(wantToPay <= wallet){ //if user has enough money to buy all stocks user wants
       var paid = wantToPay
-      this.setState({
-        canBuyStock: true,
-        user: {
-          name: this.props.currentUser.username,
-          wallet: parseFloat((this.props.currentUser.wallet - paid).toFixed(4)) ,
-          shares: parseInt(this.props.currentUser.shares) + parseInt(this.state.sharesToBuy)
-        }
-      }, () => this.callApi("bought"))
+      var data = {
+        paid: -paid,
+        sharesToBuy: this.state.sharesToBuy,
+      }
+      this.props.changeAppUserState(data, () => this.callApi("bought"))
     } else if (wallet > lastValue){ //if cost of 1 stock is less than money in the pocket
-
       var actuallyCanBuy = Math.floor(wallet / lastValue)
-      var paid = lastValue * actuallyCanBuy
-      this.setState({
-        sharesToBuy: actuallyCanBuy,
-        user: {
-          name: this.props.currentUser.username,
-          wallet: parseFloat((this.props.currentUser.wallet - paid).toFixed(4)) ,
-          shares: parseInt(this.props.currentUser.shares) + parseInt(this.state.sharesToBuy)
-        }
-      }, () => this.callApi("bought"))
+      var paid = (lastValue * actuallyCanBuy)
+      var data = {
+        paid: -paid,
+        sharesToBuy: actuallyCanBuy
+      }
+      this.props.changeAppUserState(data, () => this.callApi("bought"))
+
     } else {  //user can not afford a purchase
       this.setState({
         canBuyStock: false
@@ -221,14 +218,11 @@ class TradeSimulatorContainer extends Component {
   handleSell(){
     var lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
     var paid = lastValue * this.state.sharesToBuy
-    this.setState({
-      canBuyStock: true,
-      user: {
-          name: this.props.currentUser.username,
-          wallet: parseFloat((this.props.currentUser.wallet + paid).toFixed(4)) ,
-          shares: parseInt(this.props.currentUser.shares) - parseInt(this.state.sharesToBuy)
-      }
-    } , () => this.callApi("sold"))
+    var data = {
+      paid: paid,
+      sharesToBuy: -this.state.sharesToBuy
+    }
+    this.props.changeAppUserState(data, () => this.callApi("bought"))
   }
 
   callApi(action){
@@ -244,18 +238,21 @@ class TradeSimulatorContainer extends Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({user_action: {
-        user_id: this.props.currentUser.id,
-        income: paid,
-        action: `${action}`,
-        current_price: parseFloat((lastValue).toFixed(4)),
-        shares: this.state.sharesToBuy,
-        wallet: this.state.user.wallet
-      }})
+      body: JSON.stringify(
+        {
+          user_action: {
+            user_id: this.props.currentUser.id,
+            income: paid,
+            action: `${action}`,
+            current_price: parseFloat((lastValue).toFixed(2)),
+            shares: this.state.sharesToBuy,
+          },
+          wallet: this.props.currentUser.wallet,
+          stocksUserHas: this.props.currentUser.shares
+      })
     })
     .then(res=> res.json())
     .then(function(data){
-      component.props.changeWalletAmount(data.wallet.amount)
       component.setState(prevState => {
         return {
             actions: [...prevState.actions, data.action]
@@ -351,6 +348,7 @@ class TradeSimulatorContainer extends Component {
   }
 
   render(){
+
 
     return(
       <div id="wrapper">

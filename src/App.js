@@ -34,20 +34,20 @@ class App extends Component {
               wallet: data.wallet,
               shares: data.user.shares
             }
-          }, console.log("App state: ", this.state))
+          })
         })
     }
   }
 
   handleSignUp(username, password){
     signUp(username, password)
-    .then(res => {
-      if(res.error){
+    .then(data => {
+      if(data.error){
         return
       }
-      localStorage.setItem('jwt', res.token)
-      localStorage.setItem('id', res.user.id)
-      this.setState({user: res.user})
+      localStorage.setItem('jwt', data.token)
+      localStorage.setItem('id', data.user.id)
+      this.setState({user: data.user})
       this.props.history.push('/game')
     })
   }
@@ -65,15 +65,15 @@ class App extends Component {
       })
   }
 
-  changeWalletAmount(data){
+  changeUserState(data, callApi){
     this.setState({
       user: {
         id: this.state.user.id,
         username: this.state.user.username,
-        wallet: data,
-        shares: this.state.user.shares
+        wallet: parseFloat((parseFloat(this.state.user.wallet) + data.paid).toFixed(2)),
+        shares: this.state.user.shares + data.sharesToBuy
       }
-    })
+    }, callApi)
   }
 
   render() {
@@ -88,7 +88,7 @@ class App extends Component {
           <Route path='/game' render={() =>
             <TradeSimulatorContainer
               currentUser={this.state.user}
-              changeWalletAmount={this.changeWalletAmount.bind(this)}/>} />
+              changeAppUserState={this.changeUserState.bind(this)}/>} />
         </Switch>
       </div>
     )
