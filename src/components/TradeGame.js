@@ -5,6 +5,7 @@ import ActionList from '../components/ActionList.js';
 
 
 export default (props) => {
+  //debugger
   function onClick(){
     props.gameIsOnFunction();
     props.generator()
@@ -12,7 +13,7 @@ export default (props) => {
 
   const showGrowth = !!props.gameIsOn ? `${props.growth}%` : null
   const canBuyStock = !!props.canBuyStock ? "" : "Not enough $. Try to sell first"
-//  const sharesSentence = props.currentUser.shares < 0 ? "You own shares!": null
+  const sharesSentence = props.user.shares < 0 ? "You owe shares!": null
   return(
     <div>
       <button onClick={onClick} disabled={props.gameIsOn}>Play!</button>
@@ -28,9 +29,10 @@ export default (props) => {
       <button className="raise" disabled={!props.gameIsOn} onClick={props.sell}>Sell!</button>
       <input type="number" min="0" step="1" value={props.sharesToBuy} onChange={props.handleChange}/>
       <label>Shares</label> {`  ${canBuyStock}`}
+      <h2>{props.user.shares} shares. {sharesSentence}</h2>
       <ActionList actionList = {props.actions} />
     </div>
   )
 }
 //
-  //<h2>{props.currentUser.shares} shares. {sharesSentence}</h2>
+  //
