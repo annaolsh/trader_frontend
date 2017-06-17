@@ -7,6 +7,7 @@ class TradeSimulatorContainer extends Component {
   constructor(props){
     super()
     this.state = {
+      liveData: null,
       firstValue: 0,
       canBuyStock: true,
       gameIsOn: false,
@@ -47,6 +48,7 @@ class TradeSimulatorContainer extends Component {
 
   //renders all actions
   componentDidMount(){
+    var container = this
     if(!localStorage.jwt){
       return this.props.history.push('/login')
     } else {
@@ -61,6 +63,16 @@ class TradeSimulatorContainer extends Component {
             actions: data.actions
           })
         })
+      fetch('https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=UBW6')
+      .then(res => res.json())
+        .then(data => {
+          var timeSeries = data["Time Series (1min)"]
+          var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+          var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+          container.setState({
+            liveData: array
+          })
+        })
     }
   }
 
@@ -71,6 +83,7 @@ class TradeSimulatorContainer extends Component {
   }
 
   generator(){
+    debugger
     var component = this
     var counter = 0
     var array = []
@@ -87,43 +100,9 @@ class TradeSimulatorContainer extends Component {
         }
       }, component.state.speed)
     }
-    fetch('https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=UBW6')
-      .then(res => res.json())
-      .then(data => {
-        var timeSeries = data["Time Series (1min)"]
-        var numOfLifeValues = Object.keys(timeSeries).length-1
-          //firstValue: parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(2)
-        array = [parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(2)]
-        //var array = keys.map( key => parseFloat(timeSeries[key]["4. close"]).toFixed(2)
-          component.setState({
-            data: { //object for chart.js
-              labels: [1],
-              datasets: [
-                {
-                  label: '$',
-                  fill: false,
-                  lineTension: 0.0,
-                  backgroundColor: null,
-                  borderColor: 'rgb(255,0,0)',
-                  borderCapStyle: 'butt',
-                  borderDash: [],
-                  borderWidth: 2,
-                  borderDashOffset: 0.0,
-                  borderJoinStyle: 'miter',
-                  pointBorderColor: 'rgb(255,0,0)',
-                  pointBackgroundColor: 'rgb(255,0,0)',
-                  pointBorderWidth: 1,
-                  pointHoverRadius: 5,
-                  pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-                  pointHoverBorderColor: 'rgba(75,192,192,1)',
-                  pointHoverBorderWidth: 2,
-                  pointRadius: 1,
-                  pointHitRadius: 10,
-                  data: [parseFloat(timeSeries[Object.keys(timeSeries)[numOfLifeValues]]["4. close"]).toFixed(2)]
-                }]}
-          }, repeat())
-      })
   }
+
+
 
   random(array){
     let lastValue = array[array.length-1]
