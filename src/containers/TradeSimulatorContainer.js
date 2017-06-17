@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import User from '../components/User.js';
 import TradeGame from '../components/TradeGame.js';
 import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom'
+var Loader = require('react-loader');
 
 class TradeSimulatorContainer extends Component {
   constructor(props){
     super()
     this.state = {
+      loaded: false,
       liveData: null,
       firstValue: 0,
       canBuyStock: true,
@@ -70,7 +72,8 @@ class TradeSimulatorContainer extends Component {
           var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
           var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
           container.setState({
-            liveData: array
+            liveData: array,
+            loaded: true
           })
         })
     }
@@ -86,36 +89,25 @@ class TradeSimulatorContainer extends Component {
     var component = this
     var counter = 0
     var liveData = this.state.liveData
-    console.log("livedata", liveData)
+    console.log(liveData)
     var i = 0
     var array = []
-    if(!liveData){
-      function repeat(){
-        setTimeout(()=>{
-          if (counter % 5) {
-            component.random(array, 'random')
-          } else { //ever fifth loop render liveValue
-            component.random(array, 'liveData', i)
-            i +=1
-              if (i >= 100){
-                i = 0
-              }
+    function repeat(){
+      setTimeout(()=>{
+        if (counter % 5) {
+          component.random(array, 'random')
+        } else { //ever fifth loop render liveValue
+          component.random(array, 'liveData', i)
+          i +=1
+            if (i >= 100){
+              i = 0
             }
-          counter +=1
-          repeat()
-        }, component.state.speed)
-      }
-      repeat()
-    } else {
-      var array = [parseFloat((Math.random() * (150 - 60) + 60).toFixed(2))]
-      function repeat(){
-        setTimeout(()=>{
-            component.random(array, 'random')
-          repeat()
-        }, component.state.speed)
-      }
-      repeat()
+          }
+        counter +=1
+        repeat()
+      }, component.state.speed)
     }
+    repeat()
   }
 
   random(array, action, i){
@@ -358,23 +350,29 @@ class TradeSimulatorContainer extends Component {
         {/* <GameInfo gameData={} />
         <Chart chartData={} />
         <GameForm /> */}
-        <TradeGame
-          gameIsOnFunction={this.gameIsOn.bind(this)}
-          gameIsOn={this.state.gameIsOn}
-          generator={this.generator.bind(this)}
-          buy={this.handleBuy.bind(this)}
-          sell={this.handleSell.bind(this)}
-          speed={this.state.speed}
-          sharesToBuy={this.state.sharesToBuy}
-          chartData={this.state.data}
-          handleChange={this.handleChange.bind(this)}
-          faster={this.increaseSpeed.bind(this)}
-          slowlier={this.decreaseSpeed.bind(this)}
-          actions={this.state.actions}
-          user={this.props.currentUser}
-          canBuyStock={this.state.canBuyStock}
-          growth={this.state.growth}
-        />
+        <Loader loaded={this.state.loaded} lines={13} length={20} width={10} radius={30}
+    corners={1} rotate={0} direction={1} color="#000" speed={1}
+    trail={60} shadow={true} hwaccel={true} className="spinner" message={'hi'}
+    zIndex={2e9} top="50%" left="50%" scale={1.00}
+    loadedClassName="loadedContent">
+          <TradeGame
+            gameIsOnFunction={this.gameIsOn.bind(this)}
+            gameIsOn={this.state.gameIsOn}
+            generator={this.generator.bind(this)}
+            buy={this.handleBuy.bind(this)}
+            sell={this.handleSell.bind(this)}
+            speed={this.state.speed}
+            sharesToBuy={this.state.sharesToBuy}
+            chartData={this.state.data}
+            handleChange={this.handleChange.bind(this)}
+            faster={this.increaseSpeed.bind(this)}
+            slowlier={this.decreaseSpeed.bind(this)}
+            actions={this.state.actions}
+            user={this.props.currentUser}
+            canBuyStock={this.state.canBuyStock}
+            growth={this.state.growth}
+          />
+        </Loader>
       </div>
     )
   }
