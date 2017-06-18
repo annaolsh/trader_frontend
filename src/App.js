@@ -8,6 +8,7 @@ import SignUpForm from './user/SignUpForm.js';
 import LogOut from './user/LogOut.js';
 import Home from './components/Home.js';
 import { logIn, signUp } from './components/apiCalls.js'
+import { LineChart, Line } from 'recharts';
 
 class App extends Component {
   constructor(props){
@@ -80,16 +81,18 @@ class App extends Component {
     return (
       <div>
         <NavBar />
-        <Switch>
-          <Route path='/home' render={() => <Home />} />
-          <Route path='/login' render={() => <LogInForm onSubmit={this.handleLoginSubmit.bind(this)}/>} />
-          <Route path='/logout' render={() => <LogOut />} />
-          <Route path='/signup' render={() => <SignUpForm handleSignUp={this.handleSignUp.bind(this)}/>} />
-          <Route path='/game' render={() =>
-            <TradeSimulatorContainer
-              currentUser={this.state.user}
-              changeAppUserState={this.changeUserState.bind(this)}/>} />
-        </Switch>
+        <div className="page-body">
+          <Switch>
+            <Route path='/home' render={() => <Home />} />
+            <Route path='/login' render={() => <LogInForm onSubmit={this.handleLoginSubmit.bind(this)}/>} />
+            <Route path='/logout' render={() => <LogOut />} />
+            <Route path='/signup' render={() => <SignUpForm handleSignUp={this.handleSignUp.bind(this)}/>} />
+            <Route path='/game' render={() =>
+              <TradeSimulatorContainer
+                currentUser={this.state.user}
+                changeAppUserState={this.changeUserState.bind(this)}/>} />
+          </Switch>
+        </div>
       </div>
     )
   }
