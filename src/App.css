@@ -6,10 +6,6 @@
   background-color: rgb(36, 48, 58)
 }
 
-.game-field{
-  background-color: rgb(30, 39, 48)
-}
-
 .App-header {
   background-color: #222;
   height: 150px;
@@ -25,5 +21,31 @@
   background: #FF9933;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #138808, #FFFFFF, #FF9933);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #138808, #FFFFFF, #FF9933); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
 }
+
+#username {
+  color: #fff;
+}
+
+#wallet {
+  color: rgb(241, 101, 110);
+}
+
+/*GameField*/
+
+.game-field{
+  background-color: rgb(30, 39, 48)
+}
+
+#speed {
+  color: rgb(241, 101, 110);
+}
+
+.white-text-game-field{
+  color: white;
+}
+
+
+
+
+/*Buttons*/

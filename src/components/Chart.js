@@ -3,33 +3,6 @@ import {Line} from 'react-chartjs-2';
 
 export default class Chart extends Component {
 
-  // constructor(props){
-  //   super(props)
-  //   this.state={
-  //     data: this.props.data
-  //   }
-  // }
-  //
-  // data(canvas){
-  //   debugger
-  //       const ctx = canvas.getContext("2d")
-  //       const gradient = ctx.createLinearGradient(0,0,100,0);
-  //       this.setState
-  //       return ({
-  //
-  //           backgroundColor: gradient
-  //       })
-  // }
-  //
-  // componentDidMount(){
-  //   const ctx = canvas.getContext("2d")
-  //   const gradient = ctx.createLinearGradient(0,0,100,0);
-  //   this.setState({
-  //
-  //   })
-  // }
-
-
   render() {
     return (
       <div>
@@ -45,14 +18,21 @@ export default class Chart extends Component {
               scales: {
                 yAxes: [{
                     ticks: {
-                        fontColor: "white",
-                        fontSize: 14
+                        fontColor: 'rgb(73,102,123)',
+                        fontSize: 14,
+                        //beginAtZero: true
+                    },
+                    gridLines: {
+                      color: 'rgb(73,102,123)'
                     }
                 }],
                 xAxes: [{
                     ticks: {
-                        fontColor: "white",
+                        fontColor: 'rgb(73,102,123)',
                         fontSize: 14
+                    },
+                    gridLines: {
+                      color: 'rgb(73,102,123)'
                     }
                 }]
             }

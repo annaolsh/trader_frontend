@@ -13,6 +13,7 @@ class TradeSimulatorContainer extends Component {
       firstValue: 0,
       canBuyStock: true,
       gameIsOn: false,
+      userCanBuy: false,
       actions: [],
       sharesToBuy: 1,
       speed: 2000, //1 min, 30 sec, 15 sec, 5 sec, 2 sec
@@ -26,14 +27,14 @@ class TradeSimulatorContainer extends Component {
             fill: false,
             lineTension: 0.0,
             backgroundColor: null,
-            borderColor: 'rgb(255,0,0)',
+            borderColor: 'rgb(0, 195, 233)',
             borderCapStyle: 'butt',
             borderDash: [],
-            borderWidth: 2,
+            borderWidth: 4,
             borderDashOffset: 0.0,
             borderJoinStyle: 'miter',
-            pointBorderColor: 'rgb(255,0,0)',
-            pointBackgroundColor: 'rgb(255,0,0)',
+            pointBorderColor: 'rgb(0, 195, 233)',
+            pointBackgroundColor: 'rgb(0, 195, 233)',
             pointBorderWidth: 1,
             pointHoverRadius: 5,
             pointHoverBackgroundColor: 'rgba(75,192,192,1)',
@@ -85,6 +86,14 @@ class TradeSimulatorContainer extends Component {
     })
   }
 
+  userCanBuy(){
+    if (this.state.data.datasets[0].data.length >= 1){
+      this.setState({
+        userCanBuy: true
+      })
+    }
+  }
+
   generator(){
     var component = this
     var counter = 0
@@ -94,7 +103,7 @@ class TradeSimulatorContainer extends Component {
     var array = []
     function repeat(){
       setTimeout(()=>{
-        if (counter % 5) {
+        if (counter % 10) {
           component.random(array, 'random')
         } else { //ever fifth loop render liveValue
           component.random(array, 'liveData', i)
@@ -147,16 +156,17 @@ class TradeSimulatorContainer extends Component {
             fill: false,
             lineTension: 0.05,
             backgroundColor: 'null',
-            borderColor: 'rgb(255,0,0)',
+            borderColor: 'rgb(0, 195, 233)',
             borderCapStyle: 'butt',
             borderDash: [],
+            borderWidth: 4,
             borderDashOffset: 0.0,
             borderJoinStyle: 'miter',
-            pointBorderColor: 'rgb(255,0,0)',
-            pointBackgroundColor: 'rgb(255,0,0)',
+            pointBorderColor: 'rgb(0, 195, 233)',
+            pointBackgroundColor: 'rgb(0, 195, 233)',
             pointBorderWidth: 1,
             pointHoverRadius: 5,
-            pointHoverBackgroundColor: 'rgb(255,0,0)',
+            pointHoverBackgroundColor: 'rgb(0, 195, 233)',
             pointHoverBorderColor: 'rgba(220,220,220,1)',
             pointHoverBorderWidth: 2,
             pointRadius: 2,
@@ -166,7 +176,7 @@ class TradeSimulatorContainer extends Component {
           }
         ]
       }
-    })
+    }, this.userCanBuy)
   }
 
   upOrDown(array){
@@ -271,17 +281,17 @@ class TradeSimulatorContainer extends Component {
               fill: false,
               lineTension: 0.1,
               backgroundColor: null,
-              borderColor: 'rgb(255,0,0)',
+              borderColor: 'rgb(0, 195, 233)',
               borderCapStyle: 'butt',
               borderDash: [],
-              borderWidth: 2,
+              borderWidth: 4,
               borderDashOffset: 0.0,
               borderJoinStyle: 'miter',
-              pointBorderColor: 'rgb(255,0,0)',
-              pointBackgroundColor: 'rgb(255,0,0)',
+              pointBorderColor: 'rgb(0, 195, 233)',
+              pointBackgroundColor: 'rgb(0, 195, 233)',
               pointBorderWidth: 1,
               pointHoverRadius: 5,
-              pointHoverBackgroundColor: 'rgb(255,0,0)',
+              pointHoverBackgroundColor: 'rgb(0, 195, 233)',
               pointHoverBorderColor: 'rgba(220,220,220,1)',
               pointHoverBorderWidth: 2,
               pointRadius: 2,
@@ -352,7 +362,7 @@ class TradeSimulatorContainer extends Component {
         <GameForm /> */}
         <Loader loaded={this.state.loaded} lines={13} length={20} width={10} radius={30}
     corners={1} rotate={0} direction={1} color="#000" speed={1}
-    trail={60} shadow={true} hwaccel={true} className="spinner" 
+    trail={60} shadow={true} hwaccel={true} className="spinner"
     zIndex={2e9} top="50%" left="50%" scale={1.00}
     loadedClassName="loadedContent">
           <TradeGame
@@ -371,6 +381,8 @@ class TradeSimulatorContainer extends Component {
             user={this.props.currentUser}
             canBuyStock={this.state.canBuyStock}
             growth={this.state.growth}
+            stocksColor={this.props.stocksColor}
+            userCanBuy={this.state.userCanBuy}
           />
         </Loader>
       </div>
