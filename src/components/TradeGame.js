@@ -36,6 +36,8 @@ export default (props) => {
               trail={60} shadow={true} hwaccel={true} className="spinner"
               zIndex={2e9} top="50%" left="50%" scale={1.00}
               loadedClassName="loadedContent">
+
+        <h1 id="selected-company">{props.selectedCompany}</h1>
         <Button onClick={onClick} disabled={props.gameIsOn}>Play!</Button>
         <br/>
         <div className="game-field">

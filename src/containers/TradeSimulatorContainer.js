@@ -8,6 +8,7 @@ class TradeSimulatorContainer extends Component {
   constructor(props){
     super()
     this.state = {
+      selectedCompany: 'Apple',
       keepGenerating: true,
       loaded: false,
       liveData: null,
@@ -48,7 +49,6 @@ class TradeSimulatorContainer extends Component {
         ]
       }
     }
-    this.baseState = this.state
   }
 
   //renders all actions
@@ -371,7 +371,7 @@ class TradeSimulatorContainer extends Component {
     }
   }
 
-  fetchLiveDataForSelectedCompany(symbol){
+  fetchLiveDataForSelectedCompany(selectedCompany, symbol){
     fetch(`https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`)
       .then(res => res.json())
         .then(data => {
@@ -382,7 +382,8 @@ class TradeSimulatorContainer extends Component {
           this.setState({
             liveData: array,
             loaded: true,
-            gameIsOn: false
+            gameIsOn: false,
+            selectedCompany: selectedCompany
           })
         })
 
@@ -450,6 +451,7 @@ class TradeSimulatorContainer extends Component {
             turnOnLoader={this.turnOnLoader.bind(this)}
             stopPreviousGame={this.stopPreviousGame.bind(this)}
             loaded={this.state.loaded}
+            selectedCompany={this.state.selectedCompany}
           />
 
       </div>

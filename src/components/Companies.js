@@ -10,7 +10,7 @@ export default class Companies extends Component {
         {Microsoft: 'MSFT'}
       ],
       companiesKeys: [],
-      selectedCompany: {'Aple': 'AAPL'}
+      selectedCompany: {'Apple': 'AAPL'}
     }
   }
 
@@ -19,6 +19,7 @@ export default class Companies extends Component {
     this.setState({
       companiesKeys: [].concat.apply([], companiesKeys)
     })
+    var selectedCompany = this.state.selectedCompany
   }
 
   handleSelectedCompany(selectedCompany){
@@ -33,7 +34,7 @@ export default class Companies extends Component {
     var companies = this.state.companies
     var selectedCompany = this.state.selectedCompany
     var symbol = companies.find( company => company[selectedCompany])[selectedCompany]
-    this.props.fetchLiveDataForSelectedCompany(symbol)
+    this.props.fetchLiveDataForSelectedCompany(selectedCompany, symbol)
   }
 
   render(){
