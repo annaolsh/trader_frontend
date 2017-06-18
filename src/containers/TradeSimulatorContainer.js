@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import User from '../components/User.js';
 import TradeGame from '../components/TradeGame.js';
 import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom'
-var Loader = require('react-loader');
+
 
 class TradeSimulatorContainer extends Component {
   constructor(props){
@@ -130,35 +130,7 @@ class TradeSimulatorContainer extends Component {
       i = 0
       array = []
       liveData = this.state.liveData
-      this.setState({
-        data: { //object for chart.js
-          labels: [],
-          datasets: [
-            {
-              label: '$',
-              fill: false,
-              lineTension: 0.0,
-              backgroundColor: null,
-              borderColor: 'rgb(0, 195, 233)',
-              borderCapStyle: 'butt',
-              borderDash: [],
-              borderWidth: 4,
-              borderDashOffset: 0.0,
-              borderJoinStyle: 'miter',
-              pointBorderColor: 'rgb(0, 195, 233)',
-              pointBackgroundColor: 'rgb(0, 195, 233)',
-              pointBorderWidth: 1,
-              pointHoverRadius: 5,
-              pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-              pointHoverBorderColor: 'rgba(75,192,192,1)',
-              pointHoverBorderWidth: 2,
-              pointRadius: 1,
-              pointHitRadius: 10,
-              data: []
-            }
-          ]
-        }
-      }, repeat())
+      repeat()
     }
 
     this.setState({
@@ -406,16 +378,46 @@ class TradeSimulatorContainer extends Component {
           var timeSeries = data["Time Series (1min)"]
           var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
           var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+          console.log(array)
           this.setState({
             liveData: array,
-            loaded: true
-          }, this.generator)
+            loaded: true,
+            gameIsOn: false
+          })
         })
+
   }
 
   turnOnLoader(){
     this.setState({
-      loaded: false
+      loaded: false,
+      data: { //object for chart.js
+        labels: [],
+        datasets: [
+          {
+            label: '$',
+            fill: false,
+            lineTension: 0.0,
+            backgroundColor: null,
+            borderColor: 'rgb(0, 195, 233)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderWidth: 4,
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: 'rgb(0, 195, 233)',
+            pointBackgroundColor: 'rgb(0, 195, 233)',
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+            pointHoverBorderColor: 'rgba(75,192,192,1)',
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: []
+          }
+        ]
+      }
     })
   }
 
@@ -426,11 +428,6 @@ class TradeSimulatorContainer extends Component {
         {/* <GameInfo gameData={} />
         <Chart chartData={} />
         <GameForm /> */}
-        <Loader loaded={this.state.loaded} lines={13} length={20} width={10} radius={30}
-    corners={1} rotate={0} direction={1} color="#000" speed={1}
-    trail={60} shadow={true} hwaccel={true} className="spinner"
-    zIndex={2e9} top="50%" left="50%" scale={1.00}
-    loadedClassName="loadedContent">
           <TradeGame
             gameIsOnFunction={this.gameIsOn.bind(this)}
             gameIsOn={this.state.gameIsOn}
@@ -452,8 +449,9 @@ class TradeSimulatorContainer extends Component {
             fetchLiveDataForSelectedCompany={this.fetchLiveDataForSelectedCompany.bind(this)}
             turnOnLoader={this.turnOnLoader.bind(this)}
             stopPreviousGame={this.stopPreviousGame.bind(this)}
+            loaded={this.state.loaded}
           />
-        </Loader>
+
       </div>
     )
   }
