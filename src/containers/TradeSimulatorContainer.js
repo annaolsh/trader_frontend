@@ -8,6 +8,7 @@ class TradeSimulatorContainer extends Component {
   constructor(props){
     super()
     this.state = {
+      keepGenerating: true,
       loaded: false,
       liveData: null,
       firstValue: 0,
@@ -47,6 +48,7 @@ class TradeSimulatorContainer extends Component {
         ]
       }
     }
+    this.baseState = this.state
   }
 
   //renders all actions
@@ -94,6 +96,12 @@ class TradeSimulatorContainer extends Component {
     }
   }
 
+  stopPreviousGame(){
+    this.setState({
+      keepGenerating: false
+    }, console.log("Game off"))
+  }
+
   generator(){
     var component = this
     var counter = 0
@@ -102,21 +110,60 @@ class TradeSimulatorContainer extends Component {
     var i = 0
     var array = []
     function repeat(){
-      setTimeout(()=>{
-        if (counter % 10) {
-          component.random(array, 'random')
-        } else { //ever fifth loop render liveValue
-          component.random(array, 'liveData', i)
-          i +=1
-            if (i >= 100){
-              i = 0
+      if(!!component.state.keepGenerating){
+        setTimeout(()=>{
+          if (counter % 10) {
+            component.random(array, 'random')
+          } else { //ever fifth loop render liveValue
+            component.random(array, 'liveData', i)
+            i +=1
+              if (i >= 100){
+                i = 0
+              }
             }
-          }
-        counter +=1
-        repeat()
-      }, component.state.speed)
+          counter +=1
+          repeat()
+        }, component.state.speed)
+      }
     }
-    repeat()
+    function newGame(){
+      i = 0
+      array = []
+      liveData = this.state.liveData
+      this.setState({
+        data: { //object for chart.js
+          labels: [],
+          datasets: [
+            {
+              label: '$',
+              fill: false,
+              lineTension: 0.0,
+              backgroundColor: null,
+              borderColor: 'rgb(0, 195, 233)',
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderWidth: 4,
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: 'rgb(0, 195, 233)',
+              pointBackgroundColor: 'rgb(0, 195, 233)',
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+              pointHoverBorderColor: 'rgba(75,192,192,1)',
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              data: []
+            }
+          ]
+        }
+      }, repeat())
+    }
+
+    this.setState({
+      keepGenerating: true
+    }, newGame)
   }
 
   random(array, action, i){
@@ -137,6 +184,7 @@ class TradeSimulatorContainer extends Component {
       } //defins a random value within a range (depends on last value in an array)
       array.push(randomValue(lastValue)); //pushes random number within a range depending on previous value
     } else if (action === 'liveData') {
+      //console.log(loveData[i])
       array.push(liveData[i])
     }
     this.addNewValue(array)
@@ -351,9 +399,27 @@ class TradeSimulatorContainer extends Component {
     }
   }
 
+  fetchLiveDataForSelectedCompany(symbol){
+    fetch(`https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`)
+      .then(res => res.json())
+        .then(data => {
+          var timeSeries = data["Time Series (1min)"]
+          var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+          var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+          this.setState({
+            liveData: array,
+            loaded: true
+          }, this.generator)
+        })
+  }
+
+  turnOnLoader(){
+    this.setState({
+      loaded: false
+    })
+  }
+
   render(){
-
-
     return(
       <div id="wrapper">
         <User user={this.props.currentUser}/>
@@ -383,6 +449,9 @@ class TradeSimulatorContainer extends Component {
             growth={this.state.growth}
             stocksColor={this.props.stocksColor}
             userCanBuy={this.state.userCanBuy}
+            fetchLiveDataForSelectedCompany={this.fetchLiveDataForSelectedCompany.bind(this)}
+            turnOnLoader={this.turnOnLoader.bind(this)}
+            stopPreviousGame={this.stopPreviousGame.bind(this)}
           />
         </Loader>
       </div>

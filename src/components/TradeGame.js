@@ -1,8 +1,8 @@
 import React from 'react'
 import Chart from '../components/Chart.js';
 import ActionList from '../components/ActionList.js';
-
-
+import Companies from '../components/Companies.js';
+import { Button } from 'react-bootstrap';
 
 export default (props) => {
   function onClick(){
@@ -26,21 +26,23 @@ export default (props) => {
     }
   }
 
+
   return(
     <div >
-      <button className="pulse-button" onClick={onClick} disabled={props.gameIsOn}>Play!</button>
+      <Companies fetchLiveDataForSelectedCompany={props.fetchLiveDataForSelectedCompany} turnOnLoader={props.turnOnLoader} stopPreviousGame={props.stopPreviousGame}/>
+      <Button onClick={onClick} disabled={props.gameIsOn}>Play!</Button>
       <br/>
       <div className="game-field">
-        <button onClick={props.slowlier}> Slowlier </button>
-        <button onClick={props.faster}> Faster </button>
+        <Button onClick={props.slowlier}> Slowlier </Button>
+        <Button onClick={props.faster}> Faster </Button>
         <h3 id="speed">Speed is {props.speed/1000} sec</h3>
         <Chart data={props.chartData}/>
         {stocksGrowth()}
         <h2 className="white-text-game-field">
           {props.chartData.datasets[0].data[props.chartData.datasets[0].data.length-1]}
         </h2>
-        <button className="raise" disabled={!props.userCanBuy} onClick={props.buy}>Buy!</button>
-        <button className="raise" disabled={!props.userCanBuy} onClick={props.sell}>Sell!</button>
+        <Button className="raise" disabled={!props.userCanBuy} onClick={props.buy}>Buy!</Button>
+        <Button className="raise" disabled={!props.userCanBuy} onClick={props.sell}>Sell!</Button>
         <input type="number" min="0" step="1" value={props.sharesToBuy} onChange={props.handleChange}/>
         <label>Shares</label> {`  ${canBuyStock}`}
         <h3 className="white-text-game-field">You have</h3>

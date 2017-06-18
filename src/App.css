@@ -46,6 +46,10 @@
 }
 
 
-
-
 /*Buttons*/
+.form-check.form-check-inline {
+  color: white;
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 16px;
+}

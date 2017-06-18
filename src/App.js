@@ -90,7 +90,7 @@ class App extends Component {
             <Route path='/game' render={() =>
               <TradeSimulatorContainer
                 currentUser={this.state.user}
-                changeAppUserState={this.changeUserState.bind(this)}/>} />
+                changeAppUserState={this.changeUserState.bind(this)}/>}/>
           </Switch>
         </div>
       </div>
