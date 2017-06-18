@@ -23,7 +23,7 @@ export default class Companies extends Component {
 
   handleSelectedCompany(selectedCompany){
     this.props.stopPreviousGame()
-    this.props.turnOnLoader
+    this.props.turnOnLoader()
     this.setState({
       selectedCompany: selectedCompany
     }, this.sendRequest)
@@ -35,8 +35,6 @@ export default class Companies extends Component {
     var symbol = companies.find( company => company[selectedCompany])[selectedCompany]
     this.props.fetchLiveDataForSelectedCompany(symbol)
   }
-
-
 
   render(){
     return(
