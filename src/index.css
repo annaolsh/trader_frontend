@@ -2,50 +2,27 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-
+  color: white;
+  background-image: url("./images/background2.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size:cover;
 }
 
 #wrapper {
-  width: 1000px;
+  width: 1200px;
   margin: 0 auto;
 }
 
-#navBar {
-  background: gray;
-  height: 70px;
-  margin-top: -20px;
-}
-
-/* buttons  */
-
-.raise:hover,
-.raise:focus {
-  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
-  transform: translateY(-0.25em);
-}
-
-/*.raise {
-  background-color: #ffa260
-}*/
-
 /*table*/
-
-table {
-  display: block;
-  margin: auto;
-  max-width: 1000px;
-  padding:5px;
-  width: 100%;
-}
-
-
 .table-fill {
   background: white;
   border-radius:3px;
   border-collapse: collapse;
   height: 320px;
   margin: auto;
-  max-width: 600px;
+  max-width: 1200px;
   padding:5px;
   width: 100%;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
@@ -53,8 +30,8 @@ table {
 }
 
 th {
-  color:#D5DDE5;;
-  background: gray;
+  color:#D5DDE5;
+  background: rgb(241, 101, 110);
   border-bottom:4px solid #9ea7af;
   border-right: 1px solid #343a45;
   font-size:23px;
@@ -123,6 +100,7 @@ td {
   font-size:18px;
   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
   border-right: 1px solid #C1C3D1;
+  width: 350px;
 }
 
 td:last-child {

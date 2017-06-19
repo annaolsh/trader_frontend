@@ -2,7 +2,7 @@ import React from 'react'
 import Chart from '../components/Chart.js';
 import ActionList from '../components/ActionList.js';
 import Companies from '../components/Companies.js';
-import { Button } from 'react-bootstrap';
+import { Button, FormControl } from 'react-bootstrap';
 var Loader = require('react-loader');
 
 export default (props) => {
@@ -30,32 +30,42 @@ export default (props) => {
 
   return(
     <div >
-      <Companies fetchLiveDataForSelectedCompany={props.fetchLiveDataForSelectedCompany} turnOnLoader={props.turnOnLoader} stopPreviousGame={props.stopPreviousGame}/>
+      <div className="game-settings">
+        <Companies fetchLiveDataForSelectedCompany={props.fetchLiveDataForSelectedCompany} turnOnLoader={props.turnOnLoader} stopPreviousGame={props.stopPreviousGame}/>
+      </div>
       <Loader loaded={props.loaded} lines={13} length={20} width={10} radius={30}
-              corners={1} rotate={0} direction={1} color="#000" speed={1}
+              corners={1} rotate={0} direction={1} color="rgb(241, 101, 110)" speed={1}
               trail={60} shadow={true} hwaccel={true} className="spinner"
               zIndex={2e9} top="50%" left="50%" scale={1.00}
               loadedClassName="loadedContent">
-
-        <h1 id="selected-company">{props.selectedCompany}</h1>
-        <Button onClick={onClick} disabled={props.gameIsOn}>Play!</Button>
+        <div className="game-settings">
+          <h1 id="selected-company">{props.selectedCompany}</h1>
+          <Button onClick={onClick} disabled={props.gameIsOn}>Play!</Button>
+        </div>
         <br/>
         <div className="game-field">
-          <Button onClick={props.slowlier}> Slowlier </Button>
-          <Button onClick={props.faster}> Faster </Button>
-          <h3 id="speed">Speed is {props.speed/1000} sec</h3>
-          <Chart data={props.chartData}/>
-          {stocksGrowth()}
-          <h2 className="white-text-game-field">
-            {props.chartData.datasets[0].data[props.chartData.datasets[0].data.length-1]}
-          </h2>
-          <Button className="raise" disabled={!props.userCanBuy} onClick={props.buy}>Buy!</Button>
-          <Button className="raise" disabled={!props.userCanBuy} onClick={props.sell}>Sell!</Button>
-          <input type="number" min="0" step="1" value={props.sharesToBuy} onChange={props.handleChange}/>
-          <label>Shares</label> {`  ${canBuyStock}`}
-          <h3 className="white-text-game-field">You have</h3>
-          <h2 className="white-text-game-field">{props.user.shares} {stocksQuantity} </h2>
-          <h3 style={{color: 'red'}}>{stocksSentence} </h3>
+          <div id="chart-area">
+            <Button onClick={props.slowlier}> Slowlier </Button>
+            <Button onClick={props.faster}> Faster </Button>
+            <h3 id="speed">Speed is {props.speed/1000} sec</h3>
+
+            <Chart data={props.chartData}/>
+            {stocksGrowth()}
+            <h2 className="white-text-game-field">
+              {props.chartData.datasets[0].data[props.chartData.datasets[0].data.length-1]}
+            </h2>
+
+            <h2>Choose number of stocks</h2>
+            <FormControl id="stocks-to-buy" type="number" min="0" step="1" value={props.sharesToBuy} onChange={props.handleChange}/>
+            <p>{`${canBuyStock}`}</p>
+            <br/>
+            <Button className="raise" disabled={!props.userCanBuy} onClick={props.buy}>Buy!</Button>
+            <Button className="raise" disabled={!props.userCanBuy} onClick={props.sell}>Sell!</Button>
+
+            <h3 className="white-text-game-field">You have</h3>
+            <h2 className="white-text-game-field">{props.user.shares} {stocksQuantity} </h2>
+            <h3 style={{color: 'red'}}>{stocksSentence} </h3>
+          </div>
         </div>
         <ActionList actionList = {props.actions} />
       </Loader>

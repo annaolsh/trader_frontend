@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Route, Redirect } from 'react-router'
 import { BrowserRouter as Router, Switch, withRouter } from 'react-router-dom'
+import { Button, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
 
 class LogInForm extends Component {
   constructor(){
@@ -24,7 +25,7 @@ class LogInForm extends Component {
 
   render(){
     return (
-      <form onSubmit={this.handleSubmit.bind(this)}>
+      <form className="sign-up-from" onSubmit={this.handleSubmit.bind(this)} >
         <label>Username</label>
         <input type='text' value={this.state.username} onChange={ e => this.handleChange('username', e.target.value)}/>
         <label>Password</label>

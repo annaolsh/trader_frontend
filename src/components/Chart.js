@@ -2,16 +2,12 @@ import React, { Component } from 'react';
 import {Line} from 'react-chartjs-2';
 
 export default class Chart extends Component {
-  
-  forceUpdateHandler(){
-    this.forceUpdate();
-  };
 
   render() {
     return (
       <div>
         <br/>
-          <Line className="line-color" data={this.props.data} width={100} height={300}
+          <Line className="line-color" data={this.props.data} width={100} height={300} padding={100}
           options={
             {
               backgroundColor: "yellow",

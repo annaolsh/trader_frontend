@@ -8,6 +8,8 @@ class TradeSimulatorContainer extends Component {
   constructor(props){
     super()
     this.state = {
+      companies: [],
+      stocksUserCanBuy: '',
       selectedCompany: 'Apple',
       keepGenerating: true,
       loaded: false,
@@ -26,9 +28,10 @@ class TradeSimulatorContainer extends Component {
         datasets: [
           {
             label: '$',
-            fill: false,
+            fill: true,
             lineTension: 0.0,
-            backgroundColor: null,
+            backgroundColor: "rgba(0, 195, 233,0.1)",
+            skipLabels : 2,
             borderColor: 'rgb(0, 195, 233)',
             borderCapStyle: 'butt',
             borderDash: [],
@@ -98,7 +101,35 @@ class TradeSimulatorContainer extends Component {
 
   stopPreviousGame(){
     this.setState({
-      keepGenerating: false
+      keepGenerating: false,
+      data: { //object for chart.js
+        labels: [],
+        datasets: [
+          {
+            label: '$',
+            fill: true,
+            lineTension: 0.0,
+            backgroundColor: "rgba(0, 195, 233,0.1)",
+            skipLabels : 2,
+            borderColor: 'rgb(0, 195, 233)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderWidth: 4,
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: 'rgb(0, 195, 233)',
+            pointBackgroundColor: 'rgb(0, 195, 233)',
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+            pointHoverBorderColor: 'rgba(75,192,192,1)',
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: []
+          }
+        ]
+      }
     }, console.log("Game off"))
   }
 
@@ -124,6 +155,37 @@ class TradeSimulatorContainer extends Component {
           counter +=1
           repeat()
         }, component.state.speed)
+      } else {
+        component.setState({
+          data: { //object for chart.js
+            labels: [],
+            datasets: [
+              {
+                label: '$',
+                fill: true,
+                lineTension: 0.0,
+                backgroundColor: "rgba(0, 195, 233,0.1)",
+                skipLabels : 2,
+                borderColor: 'rgb(0, 195, 233)',
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderWidth: 4,
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: 'rgb(0, 195, 233)',
+                pointBackgroundColor: 'rgb(0, 195, 233)',
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+                pointHoverBorderColor: 'rgba(75,192,192,1)',
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: []
+              }
+            ]
+          }
+        })
       }
     }
     function newGame(){
@@ -173,9 +235,10 @@ class TradeSimulatorContainer extends Component {
         datasets: [
           {
             label: '$',
-            fill: false,
+            fill: true,
             lineTension: 0.05,
-            backgroundColor: 'null',
+            backgroundColor: "rgba(0, 195, 233,0.1)",
+            skipLabels : 2,
             borderColor: 'rgb(0, 195, 233)',
             borderCapStyle: 'butt',
             borderDash: [],
@@ -218,6 +281,9 @@ class TradeSimulatorContainer extends Component {
     //var difference = wallet - wantToPay
     if(wantToPay <= wallet){ //if user has enough money to buy all stocks user wants
       var paid = wantToPay
+      this.setState({
+        stocksUserCanBuy: this.state.sharesToBuy
+      })
       var data = {
         paid: -paid,
         sharesToBuy: this.state.sharesToBuy,
@@ -225,6 +291,9 @@ class TradeSimulatorContainer extends Component {
       this.props.changeAppUserState(data, () => this.callApi("bought"))
     } else if (wallet > lastValue){ //if cost of 1 stock is less than money in the pocket
       var actuallyCanBuy = Math.floor(wallet / lastValue)
+      this.setState({
+        stocksUserCanBuy: actuallyCanBuy
+      })
       var paid = (lastValue * actuallyCanBuy)
       var data = {
         paid: -paid,
@@ -241,55 +310,86 @@ class TradeSimulatorContainer extends Component {
 
   handleSell(){
     var lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
-    var paid = lastValue * this.state.sharesToBuy
+    var paid = parseFloat((lastValue * this.state.sharesToBuy).toFixed(2))
     var data = {
       paid: paid,
       sharesToBuy: -this.state.sharesToBuy
     }
-    this.props.changeAppUserState(data, () => this.callApi("bought"))
+    this.props.changeAppUserState(data, () => this.callApi("sold"))
   }
 
   callApi(action){
     var paid;
     let lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
     if (action === "bought"){
-      var paid = -lastValue * this.state.sharesToBuy
-    } else {var paid = lastValue * this.state.sharesToBuy}
-    const component = this
-    fetch('http://localhost:3000/actions', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(
-        {
-          user_action: {
-            user_id: this.props.currentUser.id,
-            income: paid,
-            action: `${action}`,
-            current_price: parseFloat((lastValue).toFixed(2)),
-            shares: this.state.sharesToBuy,
-          },
-          wallet: this.props.currentUser.wallet,
-          stocksUserHas: this.props.currentUser.shares
+      var paid = -(parseFloat((lastValue * this.state.stocksUserCanBuy).toFixed(2)))
+      const component = this
+      fetch('http://localhost:3000/actions', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+          {
+            user_action: {
+              user_id: this.props.currentUser.id,
+              income: paid,
+              action: `${action}`,
+              current_price: parseFloat((lastValue).toFixed(2)),
+              shares: this.state.stocksUserCanBuy,
+            },
+            wallet: this.props.currentUser.wallet,
+            stocksUserHas: this.props.currentUser.shares
+        })
       })
-    })
-    .then(res=> res.json())
-    .then(function(data){
-      component.setState(prevState => {
-        return {
-            actions: [...prevState.actions, data.action]
-        }
+      .then(res=> res.json())
+      .then(function(data){
+        component.setState(prevState => {
+          return {
+              actions: [...prevState.actions, data.action]
+          }
+        })
       })
-    })
+    } else {
+      var paid = lastValue * this.state.sharesToBuy
+      const component = this
+      fetch('http://localhost:3000/actions', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+          {
+            user_action: {
+              user_id: this.props.currentUser.id,
+              income: paid,
+              action: `${action}`,
+              current_price: parseFloat((lastValue).toFixed(2)),
+              shares: this.state.sharesToBuy,
+            },
+            wallet: this.props.currentUser.wallet,
+            stocksUserHas: this.props.currentUser.shares
+        })
+      })
+      .then(res=> res.json())
+      .then(function(data){
+        component.setState(prevState => {
+          return {
+              actions: [...prevState.actions, data.action]
+          }
+        })
+      })
+    }
+
 
   }
 
   chartDataLength(){
     var chartData = this.state.data.datasets[0].data
     var labels = this.state.data.labels
-    if (chartData.length >=60){
+    if (chartData.length >=30){
       chartData.shift()
       labels.shift()
       this.setState({
@@ -298,9 +398,10 @@ class TradeSimulatorContainer extends Component {
           datasets: [
             {
               label: '$',
-              fill: false,
+              fill: true,
               lineTension: 0.1,
-              backgroundColor: null,
+              backgroundColor: "rgba(0, 195, 233,0.1)",
+              skipLabels : 2,
               borderColor: 'rgb(0, 195, 233)',
               borderCapStyle: 'butt',
               borderDash: [],
@@ -397,9 +498,10 @@ class TradeSimulatorContainer extends Component {
         datasets: [
           {
             label: '$',
-            fill: false,
+            fill: true,
             lineTension: 0.0,
-            backgroundColor: null,
+            backgroundColor: "rgba(0, 195, 233,0.1)",
+            skipLabels : 2,
             borderColor: 'rgb(0, 195, 233)',
             borderCapStyle: 'butt',
             borderDash: [],
