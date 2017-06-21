@@ -39,6 +39,10 @@
   color: rgb(241, 101, 110);
 }
 
+.loader {
+  padding-top: 1000px;
+}
+
 .game-settings{
   padding-left: 50px
 }

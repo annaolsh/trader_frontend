@@ -83,18 +83,41 @@ class TradeSimulatorContainer extends Component {
               actions: formattedActions
             })
         })
-      fetch('https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=UBW6')
-      .then(res => res.json())
-        .then(data => {
-          var timeSeries = data["Time Series (1min)"]
-          var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
-          var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
-          container.setState({
-            liveData: array,
-            loaded: true
-          })
-        })
+        this.fetchLiveDataForCompany("Apple", "AAPL")
     }
+  }
+
+  fetchLiveDataForCompany(selectedCompany, symbol){
+    try {
+      console.log("Fetching")
+      var liveData =
+        fetch(`https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`) //later do it from my backend
+    }
+    catch(err){
+      console.log("ERROR")
+      return this.fetchLiveDataForCompany(selectedCompany, symbol)
+    }
+    return liveData
+    .then(res => res.json())
+      .then(data => {
+        console.log("Data", data)
+        var timeSeries = data["Time Series (1min)"]
+        var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+        var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+        this.setState({
+          liveData: array,
+          loaded: true,
+          gameIsOn: false,
+          selectedCompany: selectedCompany
+        })
+      })
+      .catch(error => {
+        console.log("returned error-data")
+        this.fetchLiveDataForCompany(selectedCompany, symbol)})
+  }
+
+  fetchLiveDataForSelectedCompany(selectedCompany, symbol){
+    return this.fetchLiveDataForCompany(selectedCompany, symbol)
   }
 
   gameIsOn(){
@@ -364,7 +387,6 @@ class TradeSimulatorContainer extends Component {
             "price": action.current_price,
             "profit": action.income
           }
-          debugger
         component.setState(prevState => {
           return {
               actions: [formattedAction, ...prevState.actions]
@@ -497,23 +519,6 @@ class TradeSimulatorContainer extends Component {
         speed: 2000
       })
     }
-  }
-
-  fetchLiveDataForSelectedCompany(selectedCompany, symbol){
-    fetch(`https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`)
-      .then(res => res.json())
-        .then(data => {
-          var timeSeries = data["Time Series (1min)"]
-          var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
-          var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
-          this.setState({
-            liveData: array,
-            loaded: true,
-            gameIsOn: false,
-            selectedCompany: selectedCompany
-          })
-        })
-
   }
 
   turnOnLoader(){
