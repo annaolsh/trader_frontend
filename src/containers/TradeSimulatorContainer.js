@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import User from '../components/User.js';
 import TradeGame from '../components/TradeGame.js';
 import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom'
-
+import { Row, Col} from 'react-bootstrap';
 
 class TradeSimulatorContainer extends Component {
   constructor(props){
@@ -67,9 +67,21 @@ class TradeSimulatorContainer extends Component {
       })
         .then(res => res.json())
         .then(data => {
+          var formattedActions = data.actions.map(action => {
+            //var date = action.created_at.slice(0, 10) + " " + action.created_at.slice(11, 19)
+            var date = action.created_at.slice(0, 10)
+
+          	return {
+              "date": date,
+              "action": action.action,
+              "stocks": action.shares,
+              "price": action.current_price,
+              "profit": action.income
+            }
+          }).reverse()
           this.setState({
-            actions: data.actions
-          })
+              actions: formattedActions
+            })
         })
       fetch('https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=UBW6')
       .then(res => res.json())
@@ -130,14 +142,13 @@ class TradeSimulatorContainer extends Component {
           }
         ]
       }
-    }, console.log("Game off"))
+    })
   }
 
   generator(){
     var component = this
     var counter = 0
     var liveData = this.state.liveData
-    console.log(liveData)
     var i = 0
     var array = []
     function repeat(){
@@ -218,7 +229,6 @@ class TradeSimulatorContainer extends Component {
       } //defins a random value within a range (depends on last value in an array)
       array.push(randomValue(lastValue)); //pushes random number within a range depending on previous value
     } else if (action === 'liveData') {
-      //console.log(loveData[i])
       array.push(liveData[i])
     }
     this.addNewValue(array)
@@ -345,9 +355,19 @@ class TradeSimulatorContainer extends Component {
       })
       .then(res=> res.json())
       .then(function(data){
+        var action = data.action
+        var date = data.action.created_at.slice(0, 10)
+        const formattedAction = {
+            "date": date,
+            "action": action.action,
+            "stocks": action.shares,
+            "price": action.current_price,
+            "profit": action.income
+          }
+          debugger
         component.setState(prevState => {
           return {
-              actions: [...prevState.actions, data.action]
+              actions: [formattedAction, ...prevState.actions]
           }
         })
       })
@@ -375,15 +395,22 @@ class TradeSimulatorContainer extends Component {
       })
       .then(res=> res.json())
       .then(function(data){
+        var action = data.action
+        var date = data.action.created_at.slice(0, 10)
+        const formattedAction = {
+            "date": date,
+            "action": action.action,
+            "stocks": action.shares,
+            "price": action.current_price,
+            "profit": action.income
+          }
         component.setState(prevState => {
           return {
-              actions: [...prevState.actions, data.action]
+              actions: [formattedAction, ...prevState.actions]
           }
         })
       })
     }
-
-
   }
 
   chartDataLength(){
@@ -479,7 +506,6 @@ class TradeSimulatorContainer extends Component {
           var timeSeries = data["Time Series (1min)"]
           var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
           var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
-          console.log(array)
           this.setState({
             liveData: array,
             loaded: true,
@@ -526,11 +552,7 @@ class TradeSimulatorContainer extends Component {
 
   render(){
     return(
-      <div id="wrapper">
-        <User user={this.props.currentUser}/>
-        {/* <GameInfo gameData={} />
-        <Chart chartData={} />
-        <GameForm /> */}
+      <div>
           <TradeGame
             gameIsOnFunction={this.gameIsOn.bind(this)}
             gameIsOn={this.state.gameIsOn}

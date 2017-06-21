@@ -7,7 +7,7 @@ export default class Chart extends Component {
     return (
       <div>
         <br/>
-          <Line className="line-color" data={this.props.data} width={100} height={300} padding={100}
+          <Line className="line-color" data={this.props.data} width={100} height={500} padding={100}
           options={
             {
               backgroundColor: "yellow",

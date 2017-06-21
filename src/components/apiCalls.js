@@ -21,6 +21,6 @@ export function signUp(username, password){
   }).then( res => res.json() )
 }
 
-export function fetchCompanies(){
-  
-}
+// export function fetchCompanies(){
+//
+// }
