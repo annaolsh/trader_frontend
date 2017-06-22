@@ -33,6 +33,7 @@
 #no-money{
   color: red;
   font-size: 18px;
+  padding-top: 7px;
 }
 
 .navbar-nav>li>a {
@@ -100,6 +101,10 @@ canvas {
   bottom:0;
   border-color: transparent #ef6670 transparent transparent;
   }
+
+#last-action{
+  color: rgb(241, 101, 110);
+}
 
 #speed {
   color: rgb(241, 101, 110);
