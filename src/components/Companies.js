@@ -40,9 +40,9 @@ export default class Companies extends Component {
   render(){
     return(
       <div>
-        {this.state.companiesKeys.map(company => {
+        {this.state.companiesKeys.map( (company, i) => {
           return(
-            <div className="form-check form-check-inline">
+            <div key={i} className="form-check form-check-inline">
               <label className="form-check-label">
                 <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={company} onClick={ (e => this.handleSelectedCompany(e.target.value))}/> {company}
               </label>

@@ -2,9 +2,7 @@
   text-align: center;
 }
 
-.page-body{
-  background-color: rgb(36, 48, 58)
-}
+
 
 .App-header {
   background-color: #222;
@@ -23,6 +21,29 @@
   background: linear-gradient(to right, #138808, #FFFFFF, #FF9933); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+.nav.navbar-nav{
+  color: #fff;
+}
+
+#no-money{
+  color: red;
+  font-size: 18px;
+}
+
+.navbar-nav>li>a {
+  color: white;
+}
+
+.navbar-nav>li>a:hover{
+   color: black
+}
+
+.sign-up-from{
+  width: 200px;
+  font-size: 20px;
+  color: black;
+}
+
 #username {
   color: #fff;
 }
@@ -31,11 +52,49 @@
   color: rgb(241, 101, 110);
 }
 
-/*GameField*/
+.loader {
+  padding-top: 1000px;
+}
+
+.game-settings{
+  padding-left: 50px
+}
+
+#user-info{
+  padding-top: 10px;
+}
+
+
+#chart-area {
+  height: 1200px;
+  padding: 50px;
+  /*padding-right: 50px;*/
+}
+
+canvas {
+  max-height: 500px;
+}
+
+
+.growth{
+  padding-left: 10px;
+}
 
 .game-field{
-  background-color: rgb(30, 39, 48)
+  background-color: rgb(30, 39, 48);
+  border-radius: 5px;
 }
+
+.triangle{
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 80px 80px 0 0;
+  position:absolute;
+  right: 16px;
+  bottom:0;
+  border-color: transparent #ef6670 transparent transparent;
+  }
 
 #speed {
   color: rgb(241, 101, 110);
@@ -45,8 +104,20 @@
   color: white;
 }
 
+#stocks-to-buy{
+  width: 100px;
+}
+
+.form-text {
+  color: black;
+}
 
 /*Buttons*/
+
+.button-play{
+  margin-bottom: 10px;
+}
+
 .form-check.form-check-inline {
   color: white;
   display: inline-block;
@@ -54,6 +125,12 @@
   font-size: 16px;
 }
 
+
+
 #selected-company {
   color: white;
+}
+
+#actions{
+  margin-top: 50px;
 }

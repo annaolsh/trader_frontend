@@ -4,7 +4,7 @@ import Action from '../components/Action.js';
 
 export default (props) => {
   return(
-    <div>
+    <div id="actions">
       <table className="table-fill">
         <tbody className="table-hover">
           <tr>

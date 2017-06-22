@@ -10,6 +10,7 @@ export function logIn(username, password){
 }
 
 export function signUp(username, password){
+
   return fetch("http://localhost:3000/signup", {
     headers: {
       'Accept': 'application/json',
@@ -19,3 +20,7 @@ export function signUp(username, password){
     body: JSON.stringify({username: username, password: password})
   }).then( res => res.json() )
 }
+
+// export function fetchCompanies(){
+//
+// }

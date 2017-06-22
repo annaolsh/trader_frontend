@@ -1,62 +1,69 @@
+#wrapper {
+  margin: 0, auto;
+  height: auto;
+}
+
 body {
-  margin: 0;
+  /*margin: 0;*/
   padding: 0;
   font-family: sans-serif;
-
+  color: white;
+  background-image: url("./images/background2.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size:cover;
 }
 
-#wrapper {
-  width: 1000px;
-  margin: 0 auto;
+.container {
+ width: initial;
 }
 
-#navBar {
-  background: gray;
-  height: 70px;
-  margin-top: -20px;
+#dollar {
+  height: 300px
 }
-
-/* buttons  */
-
-.raise:hover,
-.raise:focus {
-  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
-  transform: translateY(-0.25em);
-}
-
-/*.raise {
-  background-color: #ffa260
-}*/
-
 /*table*/
-
-table {
-  display: block;
-  margin: auto;
-  max-width: 1000px;
-  padding:5px;
-  width: 100%;
+#table{
+  padding-top: 20px;
+  color: #1e2730
 }
 
+.pagination>li>a, .pagination>li>span {
+  color: black;
+}
 
-.table-fill {
-  background: white;
-  border-radius:3px;
-  border-collapse: collapse;
-  height: 320px;
-  margin: auto;
-  max-width: 600px;
-  padding:5px;
-  width: 100%;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  animation: float 5s infinite;
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover{
+  background-color: rgb(241, 101, 110)
+}
+
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover{
+  border: none;
+}
+
+.pagination>li>a, .pagination>li>span{
+  border: none;
+}
+
+.table.table-bordered thead th {
+  font-size: 20px;
+  height: 70px;
+  border: 1px solid gray;
+  border-left: 1px solid gray;
+  color: #fcede3;
+  white-space: normal;
+}
+
+.table.table-bordered tbody td{
+  border: 1px solid gray;
+  color: #fcede3;
+  border-left: 1px solid gray;
 }
 
 th {
-  color:#D5DDE5;;
-  background: gray;
-  border-bottom:4px solid #9ea7af;
-  border-right: 1px solid #343a45;
+  color:#D5DDE5;
+  background: rgb(241, 101, 110);
+  border-bottom:4px solid #49667b;
+  border-right: 1px solid #49667b;
   font-size:23px;
   font-weight: 100;
   padding:24px;
@@ -75,19 +82,19 @@ th:last-child {
 }
 
 tr {
-  border-top: 1px solid #C1C3D1;
-  border-bottom-: 1px solid #C1C3D1;
-  color:#666B85;
+  border: 1px solid black;
+  /*border-bottom-: 1px solid #49667b;*/
+  color: white;
   font-size:16px;
-  font-weight:normal;
+  font-weight: normal;
   text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
 }
 
 tr:hover td {
   background:#4E5066;
   color:#FFFFFF;
-  border-top: 1px solid #22262e;
-  border-bottom: 1px solid #22262e;
+  border-top: 1px solid #49667b;
+  border-bottom: 1px solid #49667b;
 }
 
 tr:first-child {
@@ -99,7 +106,7 @@ tr:last-child {
 }
 
 tr:nth-child(odd) td {
-  background:#EBEBEB;
+  /*background:#EBEBEB;*/
 }
 
 tr:nth-child(odd):hover td {
@@ -115,14 +122,14 @@ tr:last-child td:last-child {
 }
 
 td {
-  background:#FFFFFF;
+
   padding:20px;
   text-align:left;
   vertical-align:middle;
   font-weight:300;
   font-size:18px;
   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
-  border-right: 1px solid #C1C3D1;
+  border-right: 1px solid #49667b;
 }
 
 td:last-child {

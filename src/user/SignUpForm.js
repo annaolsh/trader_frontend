@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import { Button, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
 
 
 class SignUpForm extends Component {
@@ -25,7 +26,7 @@ class SignUpForm extends Component {
 
   render(){
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form className="sign-up-from" onSubmit={this.handleSubmit}>
         <label>Username</label>
         <input type='text' value={this.state.username} onChange={ e => this.handleChange('username', e.target.value)}/>
         <label>Password</label>
