@@ -314,6 +314,7 @@ class TradeSimulatorContainer extends Component {
 
     } else {  //user can not afford a purchase
       this.setState({
+        userBoughtLess: false,
         canBuyStock: false
       })
     }
@@ -367,7 +368,6 @@ class TradeSimulatorContainer extends Component {
           }
         component.setState(prevState => {
           return {
-              userBoughtLess: false,
               lastAction: formattedAction,
               actions: [formattedAction, ...prevState.actions]
           }
