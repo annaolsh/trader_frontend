@@ -13,6 +13,8 @@ export default (props) => {
     props.gameIsOnFunction();
     props.generator()
   }
+
+  const userBoughtLess = !!props.userBoughtLess ? `You don't have money to buy all stocks. You've bought just ${props.lastAction.stocks} stocks` : null
   const showGrowth = !!props.gameIsOn ? `${props.growth}%` : null
   const canBuyStock = !!props.canBuyStock ? "" : "Not enough $. Try to sell first"
   const stocksSentence = props.user.shares < 0 ? "You owe stocks!": null
@@ -110,6 +112,7 @@ export default (props) => {
                         <p id="no-money">{`${canBuyStock}`}</p>
                           <Button className="raise" disabled={!props.userCanBuy} onClick={props.buy}>Buy!</Button>
                           <Button className="raise" disabled={!props.userCanBuy} onClick={props.sell}>Sell!</Button>
+                          <p id="user-bought-less">{userBoughtLess}</p>
                         <h3 className="white-text-game-field">You have</h3>
                         <h2 className="white-text-game-field">{props.user.shares} {stocksQuantity} </h2>
                         <h3 style={{color: 'red'}}>{stocksSentence} </h3>
