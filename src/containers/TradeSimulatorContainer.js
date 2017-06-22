@@ -408,6 +408,7 @@ class TradeSimulatorContainer extends Component {
           }
         component.setState(prevState => {
           return {
+              canBuyStock: true,
               userBoughtLess: false,
               lastAction: formattedAction,
               actions: [formattedAction, ...prevState.actions]
@@ -526,6 +527,7 @@ class TradeSimulatorContainer extends Component {
   }
 
   render(){
+    console.log("can buy stock", this.state.canBuyStock)
     return(
       <div>
           <TradeGame

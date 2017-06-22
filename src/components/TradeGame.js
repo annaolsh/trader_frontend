@@ -35,13 +35,38 @@ export default (props) => {
   function renderLastAction(){
     var lastAction = props.lastAction
     if (!!lastAction) {
-      var numberOfStocks = lastAction.stocks > 1 ? `${lastAction.stocks} stocks for ${lastAction.price} per stock` : `${lastAction.stocks} stock for $${lastAction.price}`
-      var lostOrGained = lastAction.action === "bought" ? `You lost $${Math.abs(lastAction.profit)}` : `Your profit is $${lastAction.profit}`
+      // var numberOfStocks = lastAction.stocks > 1 ? `${lastAction.stocks} stocks for ${lastAction.price} per stock` : `${lastAction.stocks} stock for $${lastAction.price}`
+      function numberOfStocks(){
+        if(lastAction.stocks > 1){
+          return(
+            <h2><span id="last-action">{lastAction.stocks}</span> stocks for <span id="last-action">{lastAction.price}</span> per stock</h2>
+          )
+        } else {
+          return(
+            <h2><span id="last-action">{lastAction.stocks}</span> stock for <span id="last-action">${lastAction.price}</span></h2>
+          )
+        }
+      }
+
+
+
+      function lostOrGained(){
+        if(lastAction.action === "bought"){
+          return(
+            <h2>You <span id="last-action">lost ${Math.abs(lastAction.profit)}`</span></h2>
+          )
+          } else {
+            return(
+              <h2>Your <span id="last-action">profit</span> is <span id="last-action">${lastAction.profit}</span></h2>
+            )
+        }
+      }
+
       return (
         <div>
-          <h2>You've just {lastAction.action}</h2>
-          <h2>{numberOfStocks}</h2>
-          <h2>{lostOrGained}</h2>
+          <h2>You've just <span id="last-action">{lastAction.action}</span></h2>
+          {numberOfStocks()}
+          {lostOrGained()}
         </div>
       )
     } else { return null}
@@ -109,18 +134,20 @@ export default (props) => {
                         <h2>Choose number of stocks</h2>
                         <FormControl id="stocks-to-buy" type="number" min="0" step="1" value={props.sharesToBuy} onChange={props.handleChange}/>
                         <br/>
+                        <Button className="raise" disabled={!props.userCanBuy} onClick={props.buy}>Buy!</Button>
+                        <Button className="raise" disabled={!props.userCanBuy} onClick={props.sell}>Sell!</Button>
                         <p id="no-money">{`${canBuyStock}`}</p>
-                          <Button className="raise" disabled={!props.userCanBuy} onClick={props.buy}>Buy!</Button>
-                          <Button className="raise" disabled={!props.userCanBuy} onClick={props.sell}>Sell!</Button>
-                          <p id="user-bought-less">{userBoughtLess}</p>
+                        <p id="user-bought-less">{userBoughtLess}</p>
                         <h3 className="white-text-game-field">You have</h3>
                         <h2 className="white-text-game-field">{props.user.shares} {stocksQuantity} </h2>
                         <h3 style={{color: 'red'}}>{stocksSentence} </h3>
                     </Col>
                     <Col xs={12} md={4}>
-                      <h2>Wallet: ${props.user.wallet}</h2>
-                      <br/>
-                      {renderLastAction()}
+                      <div id="helper-info">
+                        <h2 id="wallet">Wallet: ${props.user.wallet}</h2>
+                        <br/>
+                        {renderLastAction()}
+                      </div>
                     </Col>
                     <Col xs={12} md={3}>
                       <div>
@@ -140,4 +167,3 @@ export default (props) => {
     </div>
   )
 }
-//<ActionList actionList = {props.actions} />
