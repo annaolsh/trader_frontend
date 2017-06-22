@@ -3,6 +3,7 @@ import Chart from '../components/Chart.js';
 import ActionList from '../components/ActionList.js';
 import ActionsTable from '../components/ActionsTable.js';
 import Companies from '../components/Companies.js';
+import dollar2 from '../images/dollar2.png';
 import User from '../components/User.js';
 import { Button, FormControl, Grid, Row, Col } from 'react-bootstrap';
 var Loader = require('react-loader');
@@ -24,11 +25,40 @@ export default (props) => {
       return <h3 style={{color: "rgb(255,255,255)"}}> {showGrowth}</h3>
     } else if (props.growth > 0) {
       return <h3 style={{color: "rgb(50,205,50)"}}> +{showGrowth}</h3>
-    } else {
+    } else if (props.growth < 0) {
       return <h3 style={{color: "rgb(255,0,0)"}}> {showGrowth}</h3>
+    } else {return null}
+  }
+
+  function renderLastAction(){
+    var lastAction = props.lastAction
+    if (!!lastAction) {
+      var numberOfStocks = lastAction.stocks > 1 ? `${lastAction.stocks} stocks for ${lastAction.price} per stock` : `${lastAction.stocks} stock for $${lastAction.price}`
+      var lostOrGained = lastAction.action === "bought" ? `You lost $${Math.abs(lastAction.profit)}` : `Your profit is $${lastAction.profit}`
+      return (
+        <div>
+          <h2>You've just {lastAction.action}</h2>
+          <h2>{numberOfStocks}</h2>
+          <h2>{lostOrGained}</h2>
+        </div>
+      )
+    } else { return null}
+  }
+
+  function dollarSign(){
+    var lastAction = props.lastAction
+    if(!!lastAction){
+      return ( <img className={dollarSignAnimation()} id="dollar" src={dollar2} />)
+
     }
   }
 
+  function dollarSignAnimation(){
+    var lastAction = props.lastAction
+    if (!!lastAction){
+      return lastAction.action === "bought" ? "animated zoomOutUp" : "animated zoomInUp"
+    }
+  }
 
   return(
     <div>
@@ -53,37 +83,55 @@ export default (props) => {
                     zIndex={2e9} top="50%" left="50%" scale={1.00}
                     loadedClassName="loadedContent">
               <br/>
+
               <div className="game-field">
-                <Button className="button-play" onClick={onClick} disabled={props.gameIsOn}>Play</Button>
                 <div id="chart-area">
-                  <Button onClick={props.slowlier}> Slowler </Button>
-                  <Button onClick={props.faster}> Faster </Button>
-                  <h3 id="speed">Speed is {props.speed/1000} sec</h3>
+                <Row className="show-grid">
+                    <Button className="play-button" onClick={onClick} disabled={props.gameIsOn}>Play</Button>
+                    <br/>
+                    <br/>
+                    <Button onClick={props.slower}> Slower </Button>
 
-                  <Chart data={props.chartData}/>
-                  {stocksGrowth()}
-                  <h2 className="white-text-game-field">
-                    {props.chartData.datasets[0].data[props.chartData.datasets[0].data.length-1]}
-                  </h2>
-
-                  <h2>Choose number of stocks</h2>
-                  <FormControl id="stocks-to-buy" type="number" min="0" step="1" value={props.sharesToBuy} onChange={props.handleChange}/>
-                  <p>{`${canBuyStock}`}</p>
-                  <br/>
-                  <Button className="raise" disabled={!props.userCanBuy} onClick={props.buy}>Buy!</Button>
-                  <Button className="raise" disabled={!props.userCanBuy} onClick={props.sell}>Sell!</Button>
-
-                  <h3 className="white-text-game-field">You have</h3>
-                  <h2 className="white-text-game-field">{props.user.shares} {stocksQuantity} </h2>
-                  <h3 style={{color: 'red'}}>{stocksSentence} </h3>
+                    <Button onClick={props.faster}> Faster </Button>
+                    <h3 id="speed">Speed is {props.speed/1000} sec</h3>
+                    <Chart data={props.chartData}/>
+                    <div className="growth">
+                      {stocksGrowth()}
+                      <h2 className="white-text-game-field">
+                        {props.chartData.datasets[0].data[props.chartData.datasets[0].data.length-1]}
+                      </h2>
+                    </div>
+                </Row>
+                  <Row>
+                    <Col xs={12} md={5}>
+                        <h2>Choose number of stocks</h2>
+                        <FormControl id="stocks-to-buy" type="number" min="0" step="1" value={props.sharesToBuy} onChange={props.handleChange}/>
+                        <br/>
+                        <p id="no-money">{`${canBuyStock}`}</p>
+                          <Button className="raise" disabled={!props.userCanBuy} onClick={props.buy}>Buy!</Button>
+                          <Button className="raise" disabled={!props.userCanBuy} onClick={props.sell}>Sell!</Button>
+                        <h3 className="white-text-game-field">You have</h3>
+                        <h2 className="white-text-game-field">{props.user.shares} {stocksQuantity} </h2>
+                        <h3 style={{color: 'red'}}>{stocksSentence} </h3>
+                    </Col>
+                    <Col xs={12} md={4}>
+                      <h2>Wallet: ${props.user.wallet}</h2>
+                      <br/>
+                      {renderLastAction()}
+                    </Col>
+                    <Col xs={12} md={3}>
+                      <div>
+                        {dollarSign()}
+                      </div>
+                    </Col>
+                  </Row>
                 </div>
+                <div className="triangle red"></div>
               </div>
               </Loader>
             </Col>
             <Col xs={6} md={4}>
-
               <ActionsTable actionList = {props.actions} />
-
             </Col>
       </Row>
     </div>

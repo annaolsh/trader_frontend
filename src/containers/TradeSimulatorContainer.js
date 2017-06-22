@@ -9,6 +9,7 @@ class TradeSimulatorContainer extends Component {
     super()
     this.state = {
       companies: [],
+      userBoughtLess: false,
       stocksUserCanBuy: '',
       selectedCompany: 'Apple',
       keepGenerating: true,
@@ -19,10 +20,11 @@ class TradeSimulatorContainer extends Component {
       gameIsOn: false,
       userCanBuy: false,
       actions: [],
+      lastAction: undefined,
       sharesToBuy: 1,
       speed: 2000, //1 min, 30 sec, 15 sec, 5 sec, 2 sec
       firstValue: 0,
-      growth: 0,
+      growth: null,
       data: { //object for chart.js
         labels: [],
         datasets: [
@@ -137,34 +139,6 @@ class TradeSimulatorContainer extends Component {
   stopPreviousGame(){
     this.setState({
       keepGenerating: false,
-      data: { //object for chart.js
-        labels: [],
-        datasets: [
-          {
-            label: '$',
-            fill: true,
-            lineTension: 0.0,
-            backgroundColor: "rgba(0, 195, 233,0.1)",
-            skipLabels : 2,
-            borderColor: 'rgb(0, 195, 233)',
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderWidth: 4,
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: 'rgb(0, 195, 233)',
-            pointBackgroundColor: 'rgb(0, 195, 233)',
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-            pointHoverBorderColor: 'rgba(75,192,192,1)',
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data: []
-          }
-        ]
-      }
     })
   }
 
@@ -191,6 +165,8 @@ class TradeSimulatorContainer extends Component {
         }, component.state.speed)
       } else {
         component.setState({
+          growth: null,
+          userCanBuy: false,
           data: { //object for chart.js
             labels: [],
             datasets: [
@@ -315,6 +291,7 @@ class TradeSimulatorContainer extends Component {
     if(wantToPay <= wallet){ //if user has enough money to buy all stocks user wants
       var paid = wantToPay
       this.setState({
+        userBoughtLess: false,
         stocksUserCanBuy: this.state.sharesToBuy
       })
       var data = {
@@ -325,7 +302,8 @@ class TradeSimulatorContainer extends Component {
     } else if (wallet > lastValue){ //if cost of 1 stock is less than money in the pocket
       var actuallyCanBuy = Math.floor(wallet / lastValue)
       this.setState({
-        stocksUserCanBuy: actuallyCanBuy
+        stocksUserCanBuy: actuallyCanBuy,
+        userBoughtLess: true
       })
       var paid = (lastValue * actuallyCanBuy)
       var data = {
@@ -385,10 +363,12 @@ class TradeSimulatorContainer extends Component {
             "action": action.action,
             "stocks": action.shares,
             "price": action.current_price,
-            "profit": action.income
+            "profit": parseFloat((action.income).toFixed(2))
           }
         component.setState(prevState => {
           return {
+              userBoughtLess: false,
+              lastAction: formattedAction,
               actions: [formattedAction, ...prevState.actions]
           }
         })
@@ -424,10 +404,12 @@ class TradeSimulatorContainer extends Component {
             "action": action.action,
             "stocks": action.shares,
             "price": action.current_price,
-            "profit": action.income
+            "profit": parseFloat((action.income).toFixed(2))
           }
         component.setState(prevState => {
           return {
+              userBoughtLess: false,
+              lastAction: formattedAction,
               actions: [formattedAction, ...prevState.actions]
           }
         })
@@ -482,41 +464,29 @@ class TradeSimulatorContainer extends Component {
   }
 
   decreaseSpeed(){
-    if (this.state.speed === 30000){
+    if (this.state.speed === 1000){
       this.setState({
-        speed: 60000
-      })
-    } else if (this.state.speed === 15000){
-      this.setState({
-        speed: 30000
-      })
-    } else if (this.state.speed === 5000){
-      this.setState({
-        speed: 15000
+        speed: 2000
       })
     } else if (this.state.speed === 2000){
       this.setState({
-        speed: 5000
+        speed: 3000
       })
     }
   }
 
   increaseSpeed(){
-    if (this.state.speed === 60000){
+    if (this.state.speed === 3000){
       this.setState({
-        speed: 30000
+        speed: 2000
       })
-    } else if (this.state.speed === 30000){
+    } else if (this.state.speed === 2000){
       this.setState({
-        speed: 15000
+        speed: 1000
       })
     } else if (this.state.speed === 15000){
       this.setState({
         speed: 5000
-      })
-    } else if (this.state.speed === 5000){
-      this.setState({
-        speed: 2000
       })
     }
   }
@@ -569,7 +539,7 @@ class TradeSimulatorContainer extends Component {
             chartData={this.state.data}
             handleChange={this.handleChange.bind(this)}
             faster={this.increaseSpeed.bind(this)}
-            slowlier={this.decreaseSpeed.bind(this)}
+            slower={this.decreaseSpeed.bind(this)}
             actions={this.state.actions}
             user={this.props.currentUser}
             canBuyStock={this.state.canBuyStock}
@@ -581,6 +551,8 @@ class TradeSimulatorContainer extends Component {
             stopPreviousGame={this.stopPreviousGame.bind(this)}
             loaded={this.state.loaded}
             selectedCompany={this.state.selectedCompany}
+            lastAction={this.state.lastAction}
+            userBoughtLess={this.state.userBoughtLess}
           />
 
       </div>
