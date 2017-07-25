@@ -376,7 +376,7 @@ class TradeSimulatorContainer extends Component {
     } else {
       var paid = lastValue * this.state.sharesToBuy
       const component = this
-      fetch('https://stock-trade-backend.herokuapp.com/actions', {
+      fetch(' https://rocky-atoll-46557.herokuapp.com/actions', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
