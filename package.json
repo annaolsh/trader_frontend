@@ -7,7 +7,6 @@
     "chart.js": "^2.6.0",
     "loaders.css": "^0.1.2",
     "react": "^15.6.1",
-    "react-scripts": "1.0.7",
     "react-bootstrap-table": "^3.4.1",
     "react-burger-menu": "^2.1.1",
     "react-chartjs-2": "^2.1.0",
@@ -15,14 +14,17 @@
     "react-loaders": "^2.5.0",
     "react-router-dom": "^4.1.1"
   },
-  "engines": {
-    "node": "7.8.0",
-    "npm": "4.2.0"
+  "devDependencies": {
+    "react-scripts": "1.0.7"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "engines": {
+    "node": "7.8.0",
+    "npm": "4.2.0"
   }
 }
