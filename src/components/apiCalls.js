@@ -1,5 +1,5 @@
 export function logIn(username, password){
-  return fetch("https://stock-trade-backend.herokuapp.com/login", {
+  return fetch("https://rocky-atoll-46557.herokuapp.com/login", {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -11,7 +11,7 @@ export function logIn(username, password){
 }
 
 export function signUp(username, password){
-  return fetch("https://stock-trade-backend.herokuapp.com/signup", {
+  return fetch("https://rocky-atoll-46557.herokuapp.com/signup", {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
