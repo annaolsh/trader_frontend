@@ -197,7 +197,7 @@ header p {
 input[class="form-input"]{
     width: 240px;
     height: 50px;
-    margin-left: 110px;
+    margin-left: 100px;
     margin-top: 2%;
     padding: 15px;
 
@@ -222,7 +222,7 @@ input:focus {
 .form-button {
     display: inline-block;
     color: #252537;
-    margin-left: 110px;
+    margin-left: 100px;
     width: 240px;
     height: 50px;
 
