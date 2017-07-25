@@ -91,7 +91,7 @@ class App extends Component {
               <Route path='/login' render={() => <LogInForm onSubmit={this.handleLoginSubmit.bind(this)}/>} />
               <Route path='/logout' render={() => <LogOut />} />
               <Route path='/signup' render={() => <SignUpForm handleSignUp={this.handleSignUp.bind(this)}/>} />
-              <Route path='/game' render={() =>
+              <Route exact path='/game' render={() =>
                 <TradeSimulatorContainer
                   currentUser={this.state.user}
                   changeAppUserState={this.changeUserState.bind(this)}/>}/>

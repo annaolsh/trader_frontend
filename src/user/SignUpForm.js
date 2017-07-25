@@ -30,8 +30,8 @@ class SignUpForm extends Component {
         <form className="sign-up-from" onSubmit={this.handleSubmit}>
           <div className="con">
             <header className="head-form">
-              <h2>Log In</h2>
-              <p>login here using your username and password</p>
+              <h2>Sign Up</h2>
+            
             </header>
             <br/>
             <div className="field-set">

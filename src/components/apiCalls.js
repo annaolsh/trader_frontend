@@ -1,8 +1,9 @@
 export function logIn(username, password){
-  return fetch("http://localhost:3000/login", {
+  return fetch("https://stock-trade-backend.herokuapp.com/login", {
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'mode': 'no-cors'
     },
     method: 'POST',
     body: JSON.stringify({username: username, password: password})
@@ -10,11 +11,11 @@ export function logIn(username, password){
 }
 
 export function signUp(username, password){
-
-  return fetch("http://localhost:3000/signup", {
+  return fetch("https://stock-trade-backend.herokuapp.com/signup", {
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'mode': 'no-cors'
     },
     method: 'POST',
     body: JSON.stringify({username: username, password: password})

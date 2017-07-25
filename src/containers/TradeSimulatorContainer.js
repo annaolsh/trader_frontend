@@ -62,7 +62,7 @@ class TradeSimulatorContainer extends Component {
     if(!localStorage.jwt){
       return this.props.history.push('/login')
     } else {
-      fetch(`http://localhost:3000/users/${localStorage.id}`, {
+      fetch(`https://stock-trade-backend.herokuapp.com/users/${localStorage.id}`, {
         headers: {
         'Authorization': localStorage.getItem('jwt')
         }
@@ -336,7 +336,7 @@ class TradeSimulatorContainer extends Component {
     if (action === "bought"){
       var paid = -(parseFloat((lastValue * this.state.stocksUserCanBuy).toFixed(2)))
       const component = this
-      fetch('http://localhost:3000/actions', {
+      fetch('https://stock-trade-backend.herokuapp.com/actions', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -376,7 +376,7 @@ class TradeSimulatorContainer extends Component {
     } else {
       var paid = lastValue * this.state.sharesToBuy
       const component = this
-      fetch('http://localhost:3000/actions', {
+      fetch('https://stock-trade-backend.herokuapp.com/actions', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -527,7 +527,6 @@ class TradeSimulatorContainer extends Component {
   }
 
   render(){
-    console.log("can buy stock", this.state.canBuyStock)
     return(
       <div>
           <TradeGame
