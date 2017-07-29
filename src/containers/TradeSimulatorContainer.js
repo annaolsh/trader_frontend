@@ -62,7 +62,7 @@ class TradeSimulatorContainer extends Component {
     if(!localStorage.jwt){
       return this.props.history.push('/login')
     } else {
-      fetch(`https://rocky-atoll-46557.herokuapp.com/users/${localStorage.id}`, {
+      fetch(`https://trader-backend.herokuapp.com/users/${localStorage.id}`, {
         headers: {
         'Authorization': localStorage.getItem('jwt')
         }
@@ -93,7 +93,7 @@ class TradeSimulatorContainer extends Component {
     try {
       console.log("Fetching")
       var liveData =
-        fetch(`https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`) //later do it from my backend
+        fetch(`https://crossorigin.me/https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`) //later do it from my backend
     }
     catch(err){
       console.log("ERROR")
@@ -336,7 +336,7 @@ class TradeSimulatorContainer extends Component {
     if (action === "bought"){
       var paid = -(parseFloat((lastValue * this.state.stocksUserCanBuy).toFixed(2)))
       const component = this
-      fetch('https://rocky-atoll-46557.herokuapp.com/actions', {
+      fetch('https://trader-backend.herokuapp.com/actions', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -376,7 +376,7 @@ class TradeSimulatorContainer extends Component {
     } else {
       var paid = lastValue * this.state.sharesToBuy
       const component = this
-      fetch(' https://rocky-atoll-46557.herokuapp.com/actions', {
+      fetch(' https://trader-backend.herokuapp.com/actions', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
