@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom'
+import { Switch, Route, withRouter } from 'react-router-dom'
 import './App.css';
 import TradeSimulatorContainer from './containers/TradeSimulatorContainer.js';
 import NavBar from './components/NavBar.js';
