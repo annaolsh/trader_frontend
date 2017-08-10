@@ -20,7 +20,7 @@ class TradeSimulatorContainer extends Component {
       actions: [],
       lastAction: undefined,
       sharesToBuy: 1,
-      speed: 2000, //1 min, 30 sec, 15 sec, 5 sec, 2 sec
+      speed: 2000,
       growth: null,
       data: { //object for chart.js
         labels: [],
