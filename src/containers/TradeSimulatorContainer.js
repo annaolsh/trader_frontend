@@ -65,6 +65,16 @@ class TradeSimulatorContainer extends Component {
       })
         .then(res => res.json())
         .then(data => {
+          // debugger
+          var timeSeries = data.data["Time Series (1min)"]
+          var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+          var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+          this.setState({
+            liveData: array,
+            loaded: true,
+            gameIsOn: false,
+            // selectedCompany:
+          })
           var formattedActions = data.actions.map(action => {
             //var date = action.created_at.slice(0, 10) + " " + action.created_at.slice(11, 19)
             var date = action.created_at.slice(0, 10)
@@ -81,41 +91,42 @@ class TradeSimulatorContainer extends Component {
               actions: formattedActions
             })
         })
-        this.fetchLiveDataForCompany("Apple", "AAPL")
+        // this.fetchLiveDataForCompany("Apple", "AAPL")
     }
   }
 
-  fetchLiveDataForCompany(selectedCompany, symbol){
-    try {
-      console.log("Fetching")
-      var liveData =
-        fetch(`http://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`) //later do it from my backend
-    }
-    catch(err){
-      console.log("ERROR")
-      return this.fetchLiveDataForCompany(selectedCompany, symbol)
-    }
-    return liveData
-    .then(res => res.json())
-      .then(data => {
-        console.log("Data", data)
-        var timeSeries = data["Time Series (1min)"]
-        var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
-        var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
-        this.setState({
-          liveData: array,
-          loaded: true,
-          gameIsOn: false,
-          selectedCompany: selectedCompany
-        })
-      })
-      .catch(error => {
-        console.log("returned error-data")
-        this.fetchLiveDataForCompany(selectedCompany, symbol)})
-  }
+  // fetchLiveDataForCompany(selectedCompany, symbol){
+  //   // try {
+  //   //   console.log("Fetching")
+  //   //   var liveData =
+  //   //     fetch(`http://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`) //later do it from my backend
+  //   // }
+  //   // catch(err){
+  //   //   console.log("ERROR")
+  //   //   return this.fetchLiveDataForCompany(selectedCompany, symbol)
+  //   // }
+  //   // return liveData
+  //   fetch()
+  //   .then(res => res.json())
+  //     .then(data => {
+  //       console.log("Data", data)
+  //       // var timeSeries = data["Time Series (1min)"]
+  //       // var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+  //       // var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+  //       // this.setState({
+  //       //   liveData: array,
+  //       //   loaded: true,
+  //       //   gameIsOn: false,
+  //       //   selectedCompany: selectedCompany
+  //       // })
+  //     })
+  //     .catch(error => {
+  //       console.log("returned error-data")
+  //       this.fetchLiveDataForCompany(selectedCompany, symbol)})
+  // }
 
   fetchLiveDataForSelectedCompany(selectedCompany, symbol){
-    return this.fetchLiveDataForCompany(selectedCompany, symbol)
+    // return this.fetchLiveDataForCompany(selectedCompany, symbol)
   }
 
   gameIsOn(){
