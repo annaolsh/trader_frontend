@@ -92,7 +92,9 @@ export default (props) => {
         <Col xs={12} md={8}>
           <div className="game-settings">
             <h1 id="selected-company">{props.selectedCompany}</h1>
-            <Companies fetchLiveDataForSelectedCompany={props.fetchLiveDataForSelectedCompany} turnOnLoader={props.turnOnLoader} stopPreviousGame={props.stopPreviousGame}/>
+            <Companies handleSelectedCompany={props.handleSelectedCompany}
+              fetchLiveDataForCompany={props.fetchLiveDataForCompany}
+             turnOnLoader={props.turnOnLoader} stopPreviousGame={props.stopPreviousGame}/>
           </div>
         </Col>
 

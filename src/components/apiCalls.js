@@ -20,6 +20,25 @@ export function signUp(username, password){
   }).then( res => res.json() )
 }
 
+export function liveData(selectedCompany){
+  return fetch(`http://localhost:3000/companies/${selectedCompany}`, {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  }).then( res => res.json() )
+}
+
+export function fetchCompanies(){
+  return fetch("http://localhost:3000/companies", {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  }).then(res => res.json())
+}
+
 export function fetchUser(){
   fetch(`http://localhost:3000/users/${localStorage.id}`, {
     headers: {
@@ -27,6 +46,3 @@ export function fetchUser(){
     }
   }).then(res => console.log(res))
 }
-// export function fetchCompanies(){
-//
-// }
