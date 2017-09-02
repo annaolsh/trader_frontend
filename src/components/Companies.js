@@ -24,6 +24,7 @@ export default class Companies extends Component {
   }
 
   handleSelectedCompany(selectedCompany){
+    debugger
     this.props.stopPreviousGame()
     this.props.turnOnLoader()
     this.setState({
@@ -32,6 +33,7 @@ export default class Companies extends Component {
   }
 
   sendRequest(){
+    debugger
     var companies = this.state.companies
     var selectedCompany = this.state.selectedCompany
     // var symbol = companies.find( company => company[selectedCompany])[selectedCompany]
@@ -52,7 +54,6 @@ export default class Companies extends Component {
           )
         }
         )}
-
       </div>
     )
   }

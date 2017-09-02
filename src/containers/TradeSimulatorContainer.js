@@ -93,16 +93,23 @@ class TradeSimulatorContainer extends Component {
     this.setState({
       selectedCompany: selectedCompany
     })
-
+    debugger
   }
 
   fetchLiveDataForCompany(selectedCompany){
+    var component = this
     liveData(selectedCompany.id)
-    .then(data => { console.log("DataFromSelectedCompany:", data)
-      if(data.error){
-        return
-      }
-      debugger
+    .then(data => {
+      var timeSeries = data.data["Time Series (1min)"]
+      var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+      var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+
+      component.setState({
+        liveData: array,
+        loaded: true,
+        gameIsOn: false,
+        selectedCompany: selectedCompany.name
+      }, console.log(this.state))
     })
     // try {
     //   console.log("Fetching")
