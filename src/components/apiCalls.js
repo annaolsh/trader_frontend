@@ -46,3 +46,15 @@ export function liveData(selectedCompany){
      method: 'GET',
    }).then(res => res.json())
  }
+
+ export function saveAction(actionInfo){
+   return fetch('http://localhost:3000/actions', {
+     method: 'POST',
+     headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json'
+     },
+     body: JSON.stringify(actionInfo)
+   })
+   .then(res => res.json())
+ }

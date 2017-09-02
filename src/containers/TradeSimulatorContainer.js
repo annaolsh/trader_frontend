@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import TradeGame from '../components/TradeGame.js';
 import { withRouter } from 'react-router-dom'
-import { liveData } from '../components/apiCalls.js'
+import { liveData, saveAction } from '../components/apiCalls.js'
 
 class TradeSimulatorContainer extends Component {
   constructor(props){
@@ -97,13 +97,12 @@ class TradeSimulatorContainer extends Component {
       var timeSeries = data.data["Time Series (1min)"]
       var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
       var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
-
       this.setState({
         liveData: array,
         loaded: true,
         gameIsOn: false,
         selectedCompany: selectedCompany.name
-      }, console.log(this.state))
+      })
   })
 }
 
@@ -320,27 +319,19 @@ class TradeSimulatorContainer extends Component {
     if (action === "bought"){
       paid = -(parseFloat((lastValue * this.state.stocksUserCanBuy).toFixed(2)))
       const component = this
-      fetch('http://localhost:3000/actions', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+      var actionInfo = {
+        user_action: {
+          user_id: this.props.currentUser.id,
+          income: paid,
+          action: "bought",
+          current_price: parseFloat((lastValue).toFixed(2)),
+          shares: this.state.stocksUserCanBuy,
         },
-        body: JSON.stringify(
-          {
-            user_action: {
-              user_id: this.props.currentUser.id,
-              income: paid,
-              action: `${action}`,
-              current_price: parseFloat((lastValue).toFixed(2)),
-              shares: this.state.stocksUserCanBuy,
-            },
-            wallet: this.props.currentUser.wallet,
-            stocksUserHas: this.props.currentUser.shares
-        })
-      })
-      .then(res=> res.json())
-      .then(function(data){
+        wallet: this.props.currentUser.wallet,
+        stocksUserHas: this.props.currentUser.shares
+      }
+      saveAction(actionInfo)
+      .then(data => {
         var action = data.action
         var date = data.action.created_at.slice(0, 10)
         const formattedAction = {
@@ -360,27 +351,19 @@ class TradeSimulatorContainer extends Component {
     } else {
       paid = lastValue * this.state.sharesToBuy
       const component = this
-      fetch(' http://localhost:3000/actions', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+      var actionInfo = {
+        user_action: {
+          user_id: this.props.currentUser.id,
+          income: paid,
+          action: `${action}`,
+          current_price: parseFloat((lastValue).toFixed(2)),
+          shares: this.state.sharesToBuy,
         },
-        body: JSON.stringify(
-          {
-            user_action: {
-              user_id: this.props.currentUser.id,
-              income: paid,
-              action: `${action}`,
-              current_price: parseFloat((lastValue).toFixed(2)),
-              shares: this.state.sharesToBuy,
-            },
-            wallet: this.props.currentUser.wallet,
-            stocksUserHas: this.props.currentUser.shares
-        })
-      })
-      .then(res=> res.json())
-      .then(function(data){
+        wallet: this.props.currentUser.wallet,
+        stocksUserHas: this.props.currentUser.shares
+      }
+      saveAction(actionInfo)
+      .then(data => {
         var action = data.action
         var date = data.action.created_at.slice(0, 10)
         const formattedAction = {

@@ -12,7 +12,7 @@ export default (props) => {
     props.gameIsOnFunction();
     props.generator()
   }
-
+  
   const userBoughtLess = !!props.userBoughtLess ? `You don't have money to buy all stocks. You've bought just ${props.lastAction.stocks} stocks` : null
   const showGrowth = !!props.gameIsOn ? `${props.growth}%` : null
   const canBuyStock = !!props.canBuyStock ? "" : "Not enough $. Try to sell first"
