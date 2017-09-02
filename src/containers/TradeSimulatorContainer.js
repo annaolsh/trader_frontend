@@ -573,7 +573,7 @@ class TradeSimulatorContainer extends Component {
             growth={this.state.growth}
             stocksColor={this.props.stocksColor}
             userCanBuy={this.state.userCanBuy}
-            fetchLiveDataForSelectedCompany={this.fetchLiveDataForSelectedCompany.bind(this)}
+            fetchLiveDataForCompany={this.fetchLiveDataForCompany.bind(this)}
             turnOnLoader={this.turnOnLoader.bind(this)}
             stopPreviousGame={this.stopPreviousGame.bind(this)}
             loaded={this.state.loaded}

@@ -24,7 +24,9 @@ export default class Companies extends Component {
   }
 
   handleSelectedCompany(selectedCompany){
-    debugger
+    if(typeof selectedCompany === "string"){
+      selectedCompany = this.state.companies.find((company) => company.name === selectedCompany)
+    }
     this.props.stopPreviousGame()
     this.props.turnOnLoader()
     this.setState({
@@ -33,11 +35,10 @@ export default class Companies extends Component {
   }
 
   sendRequest(){
-    debugger
     var companies = this.state.companies
     var selectedCompany = this.state.selectedCompany
     // var symbol = companies.find( company => company[selectedCompany])[selectedCompany]
-    this.props.fetchLiveDataForSelectedCompany(selectedCompany)
+    this.props.fetchLiveDataForCompany(selectedCompany)
   }
 
   render(){
@@ -47,7 +48,7 @@ export default class Companies extends Component {
           return(
             <div key={i} className="form-check form-check-inline">
               <label className="form-check-label">
-                <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={company} onClick={ (e => this.handleSelectedCompany(e.target.value))}/>
+                <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={company.name} onClick={ (e => this.handleSelectedCompany(e.target.value))}/>
                   {company.name}
               </label>
             </div>
