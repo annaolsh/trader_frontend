@@ -1,11 +1,10 @@
 import React from 'react'
 import Chart from '../components/Chart.js';
-import ActionList from '../components/ActionList.js';
 import ActionsTable from '../components/ActionsTable.js';
 import Companies from '../components/Companies.js';
 import dollar2 from '../images/dollar2.png';
 import User from '../components/User.js';
-import { Button, FormControl, Grid, Row, Col } from 'react-bootstrap';
+import { Button, FormControl, Row, Col } from 'react-bootstrap';
 var Loader = require('react-loader');
 
 export default (props) => {
@@ -20,7 +19,7 @@ export default (props) => {
   const stocksSentence = props.user.shares < 0 ? "You owe stocks!": null
   const stocksQuantity = props.user.shares === 1 || props.user.shares === -1 ? "stock" : "stocks"
   const growth = props.showGrowth
-  const growthColor = growth >= 0 ? "{color: green}" : "{color: red}"
+  //const growthColor = growth >= 0 ? "{color: green}" : "{color: red}"
 
   function stocksGrowth(){
     if(props.growth === 0){

@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import User from '../components/User.js';
 import TradeGame from '../components/TradeGame.js';
+<<<<<<< HEAD
 import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom'
 import { Row, Col} from 'react-bootstrap';
 import { liveData } from '../components/apiCalls.js'
+=======
+import { withRouter } from 'react-router-dom'
+>>>>>>> master
 
 class TradeSimulatorContainer extends Component {
   constructor(props){
@@ -23,8 +26,7 @@ class TradeSimulatorContainer extends Component {
       actions: [],
       lastAction: undefined,
       sharesToBuy: 1,
-      speed: 2000, //1 min, 30 sec, 15 sec, 5 sec, 2 sec
-      firstValue: 0,
+      speed: 2000,
       growth: null,
       data: { //object for chart.js
         labels: [],
@@ -59,7 +61,6 @@ class TradeSimulatorContainer extends Component {
 
   //renders all actions
   componentDidMount(){
-    var container = this
     if(!localStorage.jwt){
       return this.props.history.push('/login')
     } else {
@@ -70,6 +71,16 @@ class TradeSimulatorContainer extends Component {
       })
         .then(res => res.json())
         .then(data => {
+          // debugger
+          var timeSeries = data.data["Time Series (1min)"]
+          var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+          var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+          this.setState({
+            liveData: array,
+            loaded: true,
+            gameIsOn: false,
+            // selectedCompany:
+          })
           var formattedActions = data.actions.map(action => {
             //var date = action.created_at.slice(0, 10) + " " + action.created_at.slice(11, 19)
             var date = action.created_at.slice(0, 10)
@@ -85,6 +96,7 @@ class TradeSimulatorContainer extends Component {
               actions: formattedActions
             })
         })
+<<<<<<< HEAD
     }
   }
 
@@ -141,9 +153,44 @@ class TradeSimulatorContainer extends Component {
     //     console.log("returned error-data")
     //     this.fetchLiveDataForCompany(selectedCompany, symbol)})
   }
+=======
+        // this.fetchLiveDataForCompany("Apple", "AAPL")
+    }
+  }
+
+  // fetchLiveDataForCompany(selectedCompany, symbol){
+  //   // try {
+  //   //   console.log("Fetching")
+  //   //   var liveData =
+  //   //     fetch(`http://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`) //later do it from my backend
+  //   // }
+  //   // catch(err){
+  //   //   console.log("ERROR")
+  //   //   return this.fetchLiveDataForCompany(selectedCompany, symbol)
+  //   // }
+  //   // return liveData
+  //   fetch()
+  //   .then(res => res.json())
+  //     .then(data => {
+  //       console.log("Data", data)
+  //       // var timeSeries = data["Time Series (1min)"]
+  //       // var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+  //       // var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+  //       // this.setState({
+  //       //   liveData: array,
+  //       //   loaded: true,
+  //       //   gameIsOn: false,
+  //       //   selectedCompany: selectedCompany
+  //       // })
+  //     })
+  //     .catch(error => {
+  //       console.log("returned error-data")
+  //       this.fetchLiveDataForCompany(selectedCompany, symbol)})
+  // }
+>>>>>>> master
 
   fetchLiveDataForSelectedCompany(selectedCompany, symbol){
-    return this.fetchLiveDataForCompany(selectedCompany, symbol)
+    // return this.fetchLiveDataForCompany(selectedCompany, symbol)
   }
 
   gameIsOn(){
@@ -169,7 +216,6 @@ class TradeSimulatorContainer extends Component {
   generator(){
     var component = this
     var counter = 0
-    var liveData = this.state.liveData
     var i = 0
     var array = []
     function repeat(){
@@ -225,7 +271,6 @@ class TradeSimulatorContainer extends Component {
     function newGame(){
       i = 0
       array = []
-      liveData = this.state.liveData
       repeat()
     }
 
@@ -235,7 +280,6 @@ class TradeSimulatorContainer extends Component {
   }
 
   random(array, action, i){
-    var liveData = this.state.liveData
     if (action === 'random'){
       var lastValue = array[array.length-1]
       var randomValue = (lastValue) => {
@@ -243,8 +287,8 @@ class TradeSimulatorContainer extends Component {
         var minV = lastValue - lastValue*0.03
         var value = parseFloat((Math.random() * (maxV - minV) + minV).toFixed(2))
         if (value <= 0 || value > array[0] * 2){
-          var minV = array[0] - array[0]*0.5
-          var maxV = array[0] + array[0]*0.5
+          minV = array[0] - array[0]*0.5
+          maxV = array[0] + array[0]*0.5
           return (parseFloat((Math.random() * (maxV - minV) + minV).toFixed(2)))
         } else {
           return (value)
@@ -252,7 +296,7 @@ class TradeSimulatorContainer extends Component {
       } //defins a random value within a range (depends on last value in an array)
       array.push(randomValue(lastValue)); //pushes random number within a range depending on previous value
     } else if (action === 'liveData') {
-      array.push(liveData[i])
+      array.push(this.state.liveData[i])
     }
     this.addNewValue(array)
     this.chartDataLength()
@@ -311,14 +355,16 @@ class TradeSimulatorContainer extends Component {
     var lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
     var wantToPay = lastValue * this.state.sharesToBuy
     var wallet = this.props.currentUser.wallet
+    var data;
+    var paid;
     //var difference = wallet - wantToPay
     if(wantToPay <= wallet){ //if user has enough money to buy all stocks user wants
-      var paid = wantToPay
+      paid = wantToPay
       this.setState({
         userBoughtLess: false,
         stocksUserCanBuy: this.state.sharesToBuy
       })
-      var data = {
+      data = {
         paid: -paid,
         sharesToBuy: this.state.sharesToBuy,
       }
@@ -329,8 +375,8 @@ class TradeSimulatorContainer extends Component {
         stocksUserCanBuy: actuallyCanBuy,
         userBoughtLess: true
       })
-      var paid = (lastValue * actuallyCanBuy)
-      var data = {
+      paid = (lastValue * actuallyCanBuy)
+      data = {
         paid: -paid,
         sharesToBuy: actuallyCanBuy
       }
@@ -358,7 +404,7 @@ class TradeSimulatorContainer extends Component {
     var paid;
     let lastValue = this.state.data.datasets[0].data[this.state.data.datasets[0].data.length-1]
     if (action === "bought"){
-      var paid = -(parseFloat((lastValue * this.state.stocksUserCanBuy).toFixed(2)))
+      paid = -(parseFloat((lastValue * this.state.stocksUserCanBuy).toFixed(2)))
       const component = this
       fetch('http://localhost:3000/actions', {
         method: 'POST',
@@ -398,9 +444,13 @@ class TradeSimulatorContainer extends Component {
         })
       })
     } else {
-      var paid = lastValue * this.state.sharesToBuy
+      paid = lastValue * this.state.sharesToBuy
       const component = this
+<<<<<<< HEAD
       fetch('http://localhost:3000/actions', {
+=======
+      fetch(' http://localhost:3000/actions', {
+>>>>>>> master
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -484,7 +534,7 @@ class TradeSimulatorContainer extends Component {
   handleChange(e){
     e.preventDefault()
     this.setState({
-      sharesToBuy: parseInt(e.target.value)
+      sharesToBuy: parseInt(e.target.value, 16)
     })
   }
 

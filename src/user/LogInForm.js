@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { Route, Redirect } from 'react-router'
-import { BrowserRouter as Router, Switch, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 // import { Button, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
 
 class LogInForm extends Component {

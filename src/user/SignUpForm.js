@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Button, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
-
 
 class SignUpForm extends Component {
   constructor(){
@@ -31,7 +29,7 @@ class SignUpForm extends Component {
           <div className="con">
             <header className="head-form">
               <h2>Sign Up</h2>
-            
+
             </header>
             <br/>
             <div className="field-set">
