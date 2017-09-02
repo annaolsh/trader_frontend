@@ -3,6 +3,7 @@ import User from '../components/User.js';
 import TradeGame from '../components/TradeGame.js';
 import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom'
 import { Row, Col} from 'react-bootstrap';
+import { liveData } from '../components/apiCalls.js'
 
 class TradeSimulatorContainer extends Component {
   constructor(props){
@@ -11,7 +12,7 @@ class TradeSimulatorContainer extends Component {
       companies: [],
       userBoughtLess: false,
       stocksUserCanBuy: '',
-      selectedCompany: 'Apple',
+      selectedCompany: "",
       keepGenerating: true,
       loaded: false,
       liveData: null,
@@ -62,7 +63,7 @@ class TradeSimulatorContainer extends Component {
     if(!localStorage.jwt){
       return this.props.history.push('/login')
     } else {
-      fetch(`https://stock-trade-backend.herokuapp.com/users/${localStorage.id}`, {
+      fetch(`http://localhost:3000/users/${localStorage.id}`, {
         headers: {
         'Authorization': localStorage.getItem('jwt')
         }
@@ -72,7 +73,6 @@ class TradeSimulatorContainer extends Component {
           var formattedActions = data.actions.map(action => {
             //var date = action.created_at.slice(0, 10) + " " + action.created_at.slice(11, 19)
             var date = action.created_at.slice(0, 10)
-
           	return {
               "date": date,
               "action": action.action,
@@ -85,37 +85,54 @@ class TradeSimulatorContainer extends Component {
               actions: formattedActions
             })
         })
-        this.fetchLiveDataForCompany("Apple", "AAPL")
     }
   }
 
-  fetchLiveDataForCompany(selectedCompany, symbol){
-    try {
-      console.log("Fetching")
-      var liveData =
-        fetch(`https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`) //later do it from my backend
-    }
-    catch(err){
-      console.log("ERROR")
-      return this.fetchLiveDataForCompany(selectedCompany, symbol)
-    }
-    return liveData
-    .then(res => res.json())
-      .then(data => {
-        console.log("Data", data)
-        var timeSeries = data["Time Series (1min)"]
-        var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
-        var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
-        this.setState({
-          liveData: array,
-          loaded: true,
-          gameIsOn: false,
-          selectedCompany: selectedCompany
-        })
-      })
-      .catch(error => {
-        console.log("returned error-data")
-        this.fetchLiveDataForCompany(selectedCompany, symbol)})
+  handleSelectedCompany(selectedCompany){
+    this.fetchLiveDataForCompany(selectedCompany)
+    this.setState({
+      selectedCompany: selectedCompany
+    })
+
+  }
+
+  fetchLiveDataForCompany(selectedCompany){
+    liveData(selectedCompany.id)
+    .then(data => { console.log("DataFromSelectedCompany:", data)
+      if(data.error){
+        return
+      }
+      debugger
+    })
+    // try {
+    //   console.log("Fetching")
+    //   var liveData =
+    //     fetch(`https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`) //later do it from my backend
+    //   var liveData =
+    //     fetch(`https://crossorigin.me/http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=1min&apikey=UBW6`)
+    //
+    // }
+    // catch(err){
+    //   console.log("ERROR")
+    //   return this.fetchLiveDataForCompany(selectedCompany, symbol)
+    // }
+    // return liveData
+    // .then(res => res.json())
+    //   .then(data => {
+    //     console.log("Data", data)
+    //     var timeSeries = data["Time Series (1min)"]
+    //     var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+    //     var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+    //     this.setState({
+    //       liveData: array,
+    //       loaded: true,
+    //       gameIsOn: false,
+    //       selectedCompany: selectedCompany
+    //     })
+    //   })
+    //   .catch(error => {
+    //     console.log("returned error-data")
+    //     this.fetchLiveDataForCompany(selectedCompany, symbol)})
   }
 
   fetchLiveDataForSelectedCompany(selectedCompany, symbol){
@@ -336,7 +353,7 @@ class TradeSimulatorContainer extends Component {
     if (action === "bought"){
       var paid = -(parseFloat((lastValue * this.state.stocksUserCanBuy).toFixed(2)))
       const component = this
-      fetch('https://stock-trade-backend.herokuapp.com/actions', {
+      fetch('http://localhost:3000/actions', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -376,7 +393,7 @@ class TradeSimulatorContainer extends Component {
     } else {
       var paid = lastValue * this.state.sharesToBuy
       const component = this
-      fetch('https://stock-trade-backend.herokuapp.com/actions', {
+      fetch('http://localhost:3000/actions', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -492,6 +509,8 @@ class TradeSimulatorContainer extends Component {
     }
   }
 
+
+
   turnOnLoader(){
     this.setState({
       loaded: false,
@@ -554,6 +573,7 @@ class TradeSimulatorContainer extends Component {
             selectedCompany={this.state.selectedCompany}
             lastAction={this.state.lastAction}
             userBoughtLess={this.state.userBoughtLess}
+            handleSelectedCompany={this.handleSelectedCompany.bind(this)}
           />
 
       </div>
