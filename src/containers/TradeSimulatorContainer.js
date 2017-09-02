@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TradeGame from '../components/TradeGame.js';
 import { withRouter } from 'react-router-dom'
+import { liveData } from '../components/apiCalls.js'
 
 class TradeSimulatorContainer extends Component {
   constructor(props){
@@ -9,7 +10,7 @@ class TradeSimulatorContainer extends Component {
       companies: [],
       userBoughtLess: false,
       stocksUserCanBuy: '',
-      selectedCompany: 'Apple',
+      selectedCompany: '',
       keepGenerating: true,
       loaded: false,
       liveData: null,
@@ -65,20 +66,8 @@ class TradeSimulatorContainer extends Component {
       })
         .then(res => res.json())
         .then(data => {
-          // debugger
-          var timeSeries = data.data["Time Series (1min)"]
-          var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
-          var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
-          this.setState({
-            liveData: array,
-            loaded: true,
-            gameIsOn: false,
-            // selectedCompany:
-          })
           var formattedActions = data.actions.map(action => {
-            //var date = action.created_at.slice(0, 10) + " " + action.created_at.slice(11, 19)
             var date = action.created_at.slice(0, 10)
-
           	return {
               "date": date,
               "action": action.action,
@@ -91,9 +80,32 @@ class TradeSimulatorContainer extends Component {
               actions: formattedActions
             })
         })
-        // this.fetchLiveDataForCompany("Apple", "AAPL")
     }
   }
+
+  handleSelectedCompany(selectedCompany){
+    this.fetchLiveDataForCompany(selectedCompany)
+    this.setState({
+      selectedCompany: selectedCompany
+    })
+
+  }
+
+  fetchLiveDataForCompany(selectedCompany){
+    liveData(selectedCompany.id)
+    .then(data => {
+      var timeSeries = data.data["Time Series (1min)"]
+      var keys = Object.keys(timeSeries).reverse() //first key is the open time, last - clos time
+      var array = keys.map( key => parseFloat(parseFloat(timeSeries[key]["4. close"]).toFixed(2)))
+
+      this.setState({
+        liveData: array,
+        loaded: true,
+        gameIsOn: false,
+        selectedCompany: selectedCompany.name
+      }, console.log(this.state))
+  })
+}
 
   // fetchLiveDataForCompany(selectedCompany, symbol){
   //   // try {
@@ -124,10 +136,6 @@ class TradeSimulatorContainer extends Component {
   //       console.log("returned error-data")
   //       this.fetchLiveDataForCompany(selectedCompany, symbol)})
   // }
-
-  fetchLiveDataForSelectedCompany(selectedCompany, symbol){
-    // return this.fetchLiveDataForCompany(selectedCompany, symbol)
-  }
 
   gameIsOn(){
     this.setState({
@@ -553,13 +561,14 @@ class TradeSimulatorContainer extends Component {
             growth={this.state.growth}
             stocksColor={this.props.stocksColor}
             userCanBuy={this.state.userCanBuy}
-            fetchLiveDataForSelectedCompany={this.fetchLiveDataForSelectedCompany.bind(this)}
+            fetchLiveDataForCompany={this.fetchLiveDataForCompany.bind(this)}
             turnOnLoader={this.turnOnLoader.bind(this)}
             stopPreviousGame={this.stopPreviousGame.bind(this)}
             loaded={this.state.loaded}
             selectedCompany={this.state.selectedCompany}
             lastAction={this.state.lastAction}
             userBoughtLess={this.state.userBoughtLess}
+            handleSelectedCompany={this.handleSelectedCompany.bind(this)}
           />
 
       </div>

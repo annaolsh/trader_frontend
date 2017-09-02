@@ -1,28 +1,31 @@
 import React, { Component } from 'react';
+import { fetchCompanies } from './apiCalls.js'
 
 export default class Companies extends Component {
   constructor(){
     super()
     this.state={
-      companies: [
-        {Facebook: 'FB'},
-        {Apple: 'AAPL'},
-        {Microsoft: 'MSFT'}
-      ],
+      companies: [],
       companiesKeys: [],
-      selectedCompany: {'Apple': 'AAPL'}
+      selectedCompany: ''
     }
   }
 
   componentDidMount(){
-    const companiesKeys = this.state.companies.map(company => Object.keys(company))
-    this.setState({
-      companiesKeys: [].concat.apply([], companiesKeys)
+    fetchCompanies()
+    .then(data => {
+      this.setState({
+        companies: data,
+        selectedCompany: data[1]
+      })
+    this.props.handleSelectedCompany(data[1])
     })
-    var selectedCompany = this.state.selectedCompany
   }
 
   handleSelectedCompany(selectedCompany){
+    if(typeof selectedCompany === "string"){
+      selectedCompany = this.state.companies.find((company) => company.name === selectedCompany)
+    }
     this.props.stopPreviousGame()
     this.props.turnOnLoader()
     this.setState({
@@ -33,18 +36,18 @@ export default class Companies extends Component {
   sendRequest(){
     var companies = this.state.companies
     var selectedCompany = this.state.selectedCompany
-    var symbol = companies.find( company => company[selectedCompany])[selectedCompany]
-    this.props.fetchLiveDataForSelectedCompany(selectedCompany, symbol)
+    this.props.fetchLiveDataForCompany(selectedCompany)
   }
 
   render(){
     return(
       <div>
-        {this.state.companiesKeys.map( (company, i) => {
+        {this.state.companies.map( (company, i) => {
           return(
             <div key={i} className="form-check form-check-inline">
               <label className="form-check-label">
-                <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={company} onClick={ (e => this.handleSelectedCompany(e.target.value))}/> {company}
+                <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={company.name} onClick={ (e => this.handleSelectedCompany(e.target.value))}/>
+                {company.name}
               </label>
             </div>
           )
