@@ -427,7 +427,7 @@ class TradeSimulatorContainer extends Component {
   handleChange(e){
     e.preventDefault()
     this.setState({
-      sharesToBuy: parseInt(e.target.value, 16)
+      sharesToBuy: parseInt(e.target.value, 10)
     })
   }
 
