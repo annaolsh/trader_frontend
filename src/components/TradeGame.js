@@ -12,7 +12,7 @@ export default (props) => {
     props.gameIsOnFunction();
     props.generator()
   }
-  
+
   const userBoughtLess = !!props.userBoughtLess ? `You don't have money to buy all stocks. You've bought just ${props.lastAction.stocks} stocks` : null
   const showGrowth = !!props.gameIsOn ? `${props.growth}%` : null
   const canBuyStock = !!props.canBuyStock ? "" : "Not enough $. Try to sell first"
@@ -34,7 +34,6 @@ export default (props) => {
   function renderLastAction(){
     var lastAction = props.lastAction
     if (!!lastAction) {
-      // var numberOfStocks = lastAction.stocks > 1 ? `${lastAction.stocks} stocks for ${lastAction.price} per stock` : `${lastAction.stocks} stock for $${lastAction.price}`
       function numberOfStocks(){
         if(lastAction.stocks > 1){
           return(
@@ -47,16 +46,14 @@ export default (props) => {
         }
       }
 
-
-
       function lostOrGained(){
         if(lastAction.action === "bought"){
           return(
-            <h2>You <span id="last-action">lost ${Math.abs(lastAction.profit)}`</span></h2>
+            <h2>You have <span id="last-action">-${Math.abs(lastAction.profit)}</span> in your wallet</h2>
           )
           } else {
             return(
-              <h2>Your <span id="last-action">profit</span> is <span id="last-action">${lastAction.profit}</span></h2>
+              <h2>You have <span id="last-action">+${lastAction.profit}</span> in your wallet</h2>
             )
         }
       }

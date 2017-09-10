@@ -25,7 +25,7 @@
 
 #user-bought-less {
   color: red;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 #no-money{
@@ -241,4 +241,3 @@ button:hover {
         transform: translateY(5px);
     }
 }
-
