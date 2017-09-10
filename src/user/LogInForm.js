@@ -35,10 +35,8 @@ class LogInForm extends Component {
             </header>
             <br/>
             <div className="field-set">
-
               <input className="form-input" id="txt-input" type="text" placeholder="@UserName" value={this.state.username} onChange={ e => this.handleChange('username', e.target.value)}/>
               <br/>
-
               <input className="form-input" type="password" placeholder="Password" id="pwd" name="password" value={this.state.password} onChange={ e => this.handleChange('password', e.target.value)} />
               <button className="form-button" type='submit'>Log In</button>
             </div>

@@ -2,8 +2,6 @@
   text-align: center;
 }
 
-
-
 .App-header {
   background-color: #222;
   height: 150px;
@@ -44,12 +42,6 @@
    color: black
 }
 
-/*.sign-up-from{
-  width: 200px;
-  font-size: 20px;
-  color: black;
-}*/
-
 #username {
   color: #fff;
 }
@@ -74,7 +66,6 @@
 #chart-area {
   height: 1200px;
   padding: 50px;
-  /*padding-right: 50px;*/
 }
 
 canvas {
@@ -135,8 +126,6 @@ canvas {
   font-size: 16px;
 }
 
-
-
 #selected-company {
   color: white;
 }
@@ -185,14 +174,6 @@ header p {
   font-size: 14px
 }
 
-
-/*.input-item {
-    background: #fff;
-    color: #333;
-    padding: 14.5px 0px 15px 9px;
-    border-radius: 5px 0px 0px 5px;
-}*/
-
 /* inputs form  */
 input[class="form-input"]{
     width: 240px;
@@ -212,6 +193,7 @@ input[class="form-input"]{
     transition: 0.2s linear;
 
 }
+
 /* focus  */
 input:focus {
     transform: translateX(-2px);
@@ -240,13 +222,6 @@ input:focus {
     margin-top: 7%;
     letter-spacing: 0.05em;
 }
-/* Submits */
-/*.submits {
-    width: 48%;
-    display: inline-block;
-    float: left;
-    margin-left: 130px;
-}*/
 
 /* buttons hover */
 button:hover {
@@ -266,3 +241,4 @@ button:hover {
         transform: translateY(5px);
     }
 }
+

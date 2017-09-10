@@ -47,7 +47,7 @@ export default class Companies extends Component {
             <div key={i} className="form-check form-check-inline">
               <label className="form-check-label">
                 <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={company.name} onClick={ (e => this.handleSelectedCompany(e.target.value))}/>
-                {company.name}
+                {` ${company.name} `}
               </label>
             </div>
           )

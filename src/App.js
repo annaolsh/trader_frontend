@@ -3,6 +3,7 @@ import { Switch, Route, withRouter } from 'react-router-dom'
 import './App.css';
 import TradeSimulatorContainer from './containers/TradeSimulatorContainer.js';
 import NavBar from './components/NavBar.js';
+// import Home from './components/Home.js';
 import LogInForm from './user/LogInForm.js';
 import SignUpForm from './user/SignUpForm.js';
 import LogOut from './user/LogOut.js';
@@ -86,6 +87,7 @@ class App extends Component {
       </Row>
           <div className="page-body">
             <Switch>
+            
               <Route path='/login' render={() => <LogInForm onSubmit={this.handleLoginSubmit.bind(this)}/>} />
               <Route path='/logout' render={() => <LogOut />} />
               <Route path='/signup' render={() => <SignUpForm handleSignUp={this.handleSignUp.bind(this)}/>} />
