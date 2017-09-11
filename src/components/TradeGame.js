@@ -49,11 +49,11 @@ export default (props) => {
       function lostOrGained(){
         if(lastAction.action === "bought"){
           return(
-            <h2>You have <span id="last-action">-${Math.abs(lastAction.profit)}</span> in your wallet</h2>
+            <h2>You've spent <span id="last-action">${Math.abs(lastAction.profit)}</span></h2>
           )
           } else {
             return(
-              <h2>You have <span id="last-action">+${lastAction.profit}</span> in your wallet</h2>
+              <h2>You've got <span id="last-action"> ${lastAction.profit}</span></h2>
             )
         }
       }

@@ -134,7 +134,7 @@ class TradeSimulatorContainer extends Component {
     function repeat(){
       if(!!component.state.keepGenerating){
         setTimeout(()=>{
-          if (counter % 10) {
+          if (counter % 9) {
             component.random(array, 'random')
           } else { //ever fifth loop render liveValue
             component.random(array, 'liveData', i)
@@ -186,7 +186,6 @@ class TradeSimulatorContainer extends Component {
       array = []
       repeat()
     }
-
     this.setState({
       keepGenerating: true
     }, newGame)

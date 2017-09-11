@@ -6,7 +6,7 @@ export default class ActionsTable extends React.Component {
   render() {
     const options = {
       page: 1,  // which page you want to show as default
-      sizePerPage: 25,  // which size per page you want to locate as default
+      sizePerPage: 24,  // which size per page you want to locate as default
       pageStartIndex: 1, // where to start counting the pages
       paginationSize: 3,  // the pagination bar size.
       prePage: 'Prev', // Previous page button text
